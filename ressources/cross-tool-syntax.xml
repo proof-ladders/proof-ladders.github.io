@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE language[
+  <!ENTITY charsdelim "_;.&#34;(){}@">
+  <!ENTITY wordsep "(?=[&charsdelim;]|\s|$)">
+  ]>
+<language name="CrossToolSyntax">
+  <highlighting>
+    <list name="reserved keywords">
+      <item>abstract</item>
+      <item>lemma</item>
+      <item>type</item>      
+    </list>
+    <list name="our types">
+      <item>bitstring</item>
+      <item>enckey</item>
+    </list>    
+    <contexts>
+      <context attribute="Normal" lineEndContext="#stay" name="code">
+        <keyword attribute="Keyword" context="#stay" String="reserved keywords" />
+        <keyword attribute="Type"    context="#stay" String="our types" additionalDeliminator=",),("/>
+        <RegExpr attribute="Decimal" context="#stay" String="[0-9]+&wordsep;" />
+        <DetectChar attribute="Char"   context="char"   char="'" />
+        <DetectChar attribute="String" context="string" char="&quot;" />
+        <Detect2Chars attribute="Comment" context="comment"  char="-"  char1="-" />
+        <Detect2Chars attribute="Comment" context="comments" char="(" char1="*" beginRegion="CommentBlock" />
+        <Detect2Chars attribute="Hole"    context="hole"     char="{" char1="!" />
+        <!-- delimiters which cannot be part of an identifier, or
+             backslash which starts a lambda expression -->
+        <AnyChar      attribute="Special" context="#stay" String="&charsdelim;\\" />
+        <!-- any other identifier (can contain backslash and single
+             quote anywhere except at start, but these two special
+             cases are already taken care off above) -->
+        <RegExpr attribute="Normal" context="#stay" String="[^&charsdelim;\s]+" />
+      </context>
+      <context attribute="Comment" lineEndContext="#pop" name="comment">
+        <IncludeRules context="##Comments" />
+      </context>
+      <context attribute="Comment" lineEndContext="#stay" name="comments" noIndentationBasedFolding="1">
+        <Detect2Chars attribute="Comment" context="comments" char="(" char1="*" beginRegion="CommentBlock" /> <!-- for nested comments -->
+        <Detect2Chars attribute="Comment" context="#pop" char="*" char1=")" endRegion="CommentBlock" />
+        <IncludeRules context="##Comments" />
+      </context>
+      <context attribute="Hole" lineEndContext="#stay" name="hole">
+        <Detect2Chars attribute="Hole" context="#pop" char="!" char1="}" />
+      </context>
+      <context attribute="Char" lineEndContext="#pop" name="char">
+        <Detect2Chars attribute="Char" context="#stay" char="\" char1="'" />
+        <DetectChar   attribute="Char" context="#pop"  char="'" />
+      </context>
+      <context attribute="String" lineEndContext="#stay" name="string">
+        <Detect2Chars attribute="String" context="#stay" char="\" char1="&quot;" />
+        <DetectChar   attribute="String" context="#pop"  char="&quot;" />
+      </context>
+    </contexts>
+    <itemDatas>
+      <itemData name="Normal"   defStyleNum="dsNormal"   spellChecking="false" />
+      <itemData name="Comment"  defStyleNum="dsComment" />
+      <itemData name="Keyword"  defStyleNum="dsKeyword"  spellChecking="false" />
+      <itemData name="Type"     defStyleNum="dsDataType" spellChecking="false" />
+      <itemData name="Special"  defStyleNum="dsOthers"   spellChecking="false" />
+      <itemData name="Decimal"  defStyleNum="dsDecVal"   spellChecking="false" />
+      <itemData name="Float"    defStyleNum="dsFloat"    spellChecking="false" />
+      <itemData name="Char"     defStyleNum="dsChar"     spellChecking="false" />
+      <itemData name="String"   defStyleNum="dsString" />
+    </itemDatas>
+  </highlighting>
+  <general>
+    <folding indentationsensitive="1"/>
+    <comments>
+      <comment name="multiLine" start="(*" end="*)" region="CommentBlock" />
+    </comments>
+    <keywords casesensitive="1"
+              additionalDeliminator=".,()" />
+  </general>
+</language>
+<!-- kate: replace-tabs on; tab-width 2; indent-width 2; -->

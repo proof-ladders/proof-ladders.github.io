@@ -24,6 +24,7 @@ protocols.html: protocols_src.md $(TEMPLATE_HTML)
 	$(PANDOC) \
 	  --template $(TEMPLATE_HTML)\
           --citeproc\
+	  --syntax ressources/cross-tool-syntax.xml \
 	  -t html -o $@ $<
 
 symmetric.html: symmetric_src.md $(TEMPLATE_HTML)

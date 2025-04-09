@@ -24,7 +24,16 @@ If you are familiar with formal methods, the [README of the protocol repository]
 
 ## Abstract functions
 
+```CrossToolSyntax
+type enckey.
+abstract senc(bitstring, enckey) : bitstring. (* cool enc fun *)
+
+```
+
+
 ## Protocol actions
+
+
 
 ### Oracle/procedure based
 
