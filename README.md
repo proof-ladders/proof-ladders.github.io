@@ -3,6 +3,8 @@
 Please do not edit HTML directly! Edit corresponding markdown files instead,
 then run make, and push your modifications to github.
 
+If you have trouble compiling, markdown changes can be pushed inside a pull request that others can compile and merge.
+
 # Requirements
 
 ## Pandoc
