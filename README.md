@@ -1,4 +1,4 @@
-# How to update our website
+# Updating the website
 
 Please do not edit HTML directly! Edit corresponding markdown files instead,
 then run make, and push your modifications to github.
