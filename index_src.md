@@ -28,8 +28,15 @@ We consider three separates set of problems focusing on
  * symmetric primitives;
  * asymmetric primitves;
  * protocols.
-		
+
+::::: warning
+
+<span style="color: #9a6700;">⚠ Warning</span>
+
 The project is a work-in-progress, we recommend that you start with the [protocols set](protocols.html) to discover its current state.
+
+:::::
+
 		
 # Why it matters?
 
