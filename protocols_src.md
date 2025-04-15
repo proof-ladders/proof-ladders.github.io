@@ -202,61 +202,279 @@ network is assumed to be attacker controlled, we thus do not make a
 distinction between arguments received over a network or given by an
 attacker. 
 
+::::: caution
+
+<span style="color: #cf222e;">⚠ Caution</span>
+
+For this part, tools have disparate input languages with distinct
+philosophy, we present the three main variants below. The two main
+couple of points to look for are:
+
+ * how are new random values sampled?
+ * how do I send or receive values over the network?
+
+
+:::::
+
 
 ### Oracle/procedure based
 
-CryptoVerif EasyCrypt
+One can define an agent through a set of oracles given to the
+attacker. Each oracle model one input/output action of an agent, where
+the inputs of the oracle are the inputs received over the network, and
+the return value of the oracle.
+
+A multiple step agent is defined by "composing" sequentially some
+oracles, where the follow-up oracle inherits the state of the previous
+ones. For the Signed DH protocol, we need two oracles for the client
+as it receives two inputs, and a single one for the server.
+
+
+This syntax is close to what cryptographers use, and is typically used
+in CryptoVerif and EasyCrypt.
+
+
+::::: todo
+
+<span style="color: ##fffd34;">⚙ WIP/TODO </span>
+
+ CryptoVerif and EasyCrypt syntax examples
+
+:::::
+
 
 ### Pi-calculus style
 
-ProVerif Squirrel
+::::: todo
+
+<span style="color: ##fffd34;">⚙ WIP/TODO </span>
+
+Describe at a high-level the pi-calculus, then  ProVerif Squirrel examples
+
+:::::
+
+
+
+
 
 ### MSR based
 
-Tamarin
+::::: todo
+
+<span style="color: ##fffd34;">⚙ WIP/TODO </span>
+
+MSR core ides + Tamarin snippet
+
+:::::
 
 
 ## Modeling the protocol
 
+To finalize the definition of the protocol, it remains to model the
+concrete scenario we are in:
+
+ * with which server public key do  we initialize the client?
+ * how many client/server sessions do we set up?
+ * ...
+
+# Attacker Model
+
+In the presented tool, we always have an active attacker which
+controls the network. However, its capabilities differ, the main split
+being between the symbolic (Proverif/Tamarin) and the computational
+(EasyCrypt,CryptoVerif/Squirrel) tools.
+
+
+## Computational attacker
+
+::::: todo
+
+<span style="color: ##fffd34;">⚙ WIP/TODO </span>
+
+Very quick description (we assume some crypto knowledge). 
+Give
+snippets of uf-cma user defined axioms for EasyCrypt/CryptoVerif. Mention dedicated
+tactics for Squirrel + user-defined functions.
+
+:::::
+
+
+
+## Symbolic attacker
+
+In the symbolic world, the cryptography is assumed to be ideal.
+
+
+::::: important
+
+<span style="color: #8250df;">🖹 Important</span>
+
+We keep here the presentation simple. Note that however, symbolic
+models have recently been developped to capture in a fine-grained
+fashion many primitives, typically capturing the low-order points of
+X25519, the length-extension property of SHA2, and other subtle
+properties of signatures, KEMs, AEADs,...
+
+In addition, it also enable to model cases where the attacker is in
+fact stronger than in the usual computational model, for instance by
+letting the attacker chose at run time the output values of a hash
+function, as long as it does not make any collision.
+
+Comparing the symbolic and the computational attacker is thus not
+compltely straigthforward in some cases, and especially on big
+protocols where computational proofs are out of reach.
+
+:::::
 
 
 # Security definitions
 
+We now turn to actually modeling the security definitions. 
+
+
+::::: caution
+
+<span style="color: #cf222e;">⚠ Caution</span>
+
+Even tools that model the attacker in the same way may capture the
+security with subtle differences, in how secret keys can be
+compromised, or with different ways of modelling authentication or
+secrecy. Clearly understanding this when reading a model is one of the
+main challenge.
+
+:::::
+
+
 ## Symbolic security definitions
 
-Tamarin/Proverif, trace based
+
+::::: todo
+
+<span style="color: ##fffd34;">⚙ WIP/TODO </span>
+
+Notion of events and attacker knwoledge, 
+model compromise inside the protocol model,
+snippets of ProVerif queries + Tamarin lemmas.
+
+:::::
+
 
 ## Computational security definitions
 
 ### Monolithic AKE style security
 
-Easycrypt + notes
+::::: todo
+
+<span style="color: ##fffd34;">⚙ WIP/TODO </span>
+
+High level summary of AKE notes, link to doc, snippets of easycrypt?
+
+:::::
+
 
 ### Split trace and indistinguishability based style
 
-Squirrel/CryptoVerif
+
+::::: todo
+
+<span style="color: ##fffd34;">⚙ WIP/TODO </span>
+
+Describe the mix approach, both with trace based dedicated
+authentication queries, and some indistinguishability based secrecy
+queries.
+
+snippets of CryptoVerif / Squirrel queries.
+
+:::::
+
+
+
+
 
 # Proving 
 
+::::: tip
+
+<span style="color: #1a7f37;">💡 Tip</span>
+
+If your only goal was to better understand what kind of guarantees are
+actually provided by the different models or tools, you can stop here!
+
+:::::
+
+We now brieffly delve into how the tools are proved.
+
 ## Automated
 
-ProVerif/Tamarin/CryptoVerif
+::::: todo
+
+<span style="color: ##fffd34;">⚙ WIP/TODO </span>
+
+Describe the automated approach, ProVerif Tamarin
+
+A little bit CryptoVerif
+
+:::::
+
+
+
+### Heuristic guidance
+
+
+::::: todo
+
+<span style="color: ##fffd34;">⚙ WIP/TODO </span>
+
+Use of helper lemmas in Tamarin/ProVerif
+oracles, additional params.
+
+:::::
+
+
 
 ## Interactive Proofs
 
 ### Logic based reasoning
 
+::::: todo
+
+<span style="color: ##fffd34;">⚙ WIP/TODO </span>
+
 Easycrypt/Squirrel
+
+:::::
+
 
 ### Restricted tactic applications
 
-CryptoVerif/Tamarin
 
-### Heuristic guidance
+::::: todo
 
-Tamarin/ProVerif
+<span style="color: ##fffd34;">⚙ WIP/TODO </span>
+
+CryptoVerif/Tamarin interactive mode
+
+:::::
 
 
+
+# Additional ressources
+
+That's it!
+
+Hopefully, you should now be able to browse the repository and understand at
+least at a high-level the models. If you want to delve deeper into one
+of the tools, here are for each some additional ressources.
+
+
+
+::::: todo
+
+<span style="color: ##fffd34;">⚙ WIP/TODO </span>
+
+Add links to doc/manual/tutorial for tools!
+
+:::::
 
 # WIP guidelines for style
 
@@ -306,6 +524,17 @@ This is a warning.
 This is a warning.
 
 :::::
+
+
+::::: todo
+
+<span style="color: ##fffd34;">⚙ WIP/TODO </span>
+
+This is a TODO.
+
+:::::
+
+
 
 
 

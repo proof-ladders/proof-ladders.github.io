@@ -83,7 +83,7 @@
 <!-- extra style definitions for nice blocks -->
 
     <style>
-.note, .tip, .important, .warning, .caution {
+.note, .tip, .important, .warning, .caution, .todo {
     padding: 0.7em;
 }
 
@@ -110,6 +110,12 @@
 	border-left: solid #cf222e 6px;
 	border-radius: 4px; 
 }
+
+.todo {
+	border-left: solid #fffd34 6px;
+	border-radius: 4px; 
+}
+
     </style>
 </head>
 
@@ -289,36 +295,156 @@ protocol, and notably receive or send messages on the network. The
 network is assumed to be attacker controlled, we thus do not make a
 distinction between arguments received over a network or given by an
 attacker.</p>
+<div class="caution">
+<p><span style="color: #cf222e;">⚠ Caution</span></p>
+<p>For this part, tools have disparate input languages with distinct
+philosophy, we present the three main variants below. The two main
+couple of points to look for are:</p>
+<ul>
+<li>how are new random values sampled?</li>
+<li>how do I send or receive values over the network?</li>
+</ul>
+</div>
 <h3 id="oracleprocedure-based">Oracle/procedure based</h3>
-<p>CryptoVerif EasyCrypt</p>
+<p>One can define an agent through a set of oracles given to the
+attacker. Each oracle model one input/output action of an agent, where
+the inputs of the oracle are the inputs received over the network, and
+the return value of the oracle.</p>
+<p>A multiple step agent is defined by “composing” sequentially some
+oracles, where the follow-up oracle inherits the state of the previous
+ones. For the Signed DH protocol, we need two oracles for the client as
+it receives two inputs, and a single one for the server.</p>
+<p>This syntax is close to what cryptographers use, and is typically
+used in CryptoVerif and EasyCrypt.</p>
+<div class="todo">
+<p><span style="color: ##fffd34;">⚙ WIP/TODO </span></p>
+<p>CryptoVerif and EasyCrypt syntax examples</p>
+</div>
 <h3 id="pi-calculus-style">Pi-calculus style</h3>
-<p>ProVerif Squirrel</p>
+<div class="todo">
+<p><span style="color: ##fffd34;">⚙ WIP/TODO </span></p>
+<p>Describe at a high-level the pi-calculus, then ProVerif Squirrel
+examples</p>
+</div>
 <h3 id="msr-based">MSR based</h3>
-<p>Tamarin</p>
+<div class="todo">
+<p><span style="color: ##fffd34;">⚙ WIP/TODO </span></p>
+<p>MSR core ides + Tamarin snippet</p>
+</div>
 <h2 id="modeling-the-protocol">Modeling the protocol</h2>
+<p>To finalize the definition of the protocol, it remains to model the
+concrete scenario we are in:</p>
+<ul>
+<li>with which server public key do we initialize the client?</li>
+<li>how many client/server sessions do we set up?</li>
+<li>…</li>
+</ul>
+<h1 id="attacker-model">Attacker Model</h1>
+<p>In the presented tool, we always have an active attacker which
+controls the network. However, its capabilities differ, the main split
+being between the symbolic (Proverif/Tamarin) and the computational
+(EasyCrypt,CryptoVerif/Squirrel) tools.</p>
+<h2 id="computational-attacker">Computational attacker</h2>
+<div class="todo">
+<p><span style="color: ##fffd34;">⚙ WIP/TODO </span></p>
+<p>Very quick description (we assume some crypto knowledge). Give
+snippets of uf-cma user defined axioms for EasyCrypt/CryptoVerif.
+Mention dedicated tactics for Squirrel + user-defined functions.</p>
+</div>
+<h2 id="symbolic-attacker">Symbolic attacker</h2>
+<p>In the symbolic world, the cryptography is assumed to be ideal.</p>
+<div class="important">
+<p><span style="color: #8250df;">🖹 Important</span></p>
+<p>We keep here the presentation simple. Note that however, symbolic
+models have recently been developped to capture in a fine-grained
+fashion many primitives, typically capturing the low-order points of
+X25519, the length-extension property of SHA2, and other subtle
+properties of signatures, KEMs, AEADs,…</p>
+<p>In addition, it also enable to model cases where the attacker is in
+fact stronger than in the usual computational model, for instance by
+letting the attacker chose at run time the output values of a hash
+function, as long as it does not make any collision.</p>
+<p>Comparing the symbolic and the computational attacker is thus not
+compltely straigthforward in some cases, and especially on big protocols
+where computational proofs are out of reach.</p>
+</div>
 <h1 id="security-definitions">Security definitions</h1>
+<p>We now turn to actually modeling the security definitions.</p>
+<div class="caution">
+<p><span style="color: #cf222e;">⚠ Caution</span></p>
+<p>Even tools that model the attacker in the same way may capture the
+security with subtle differences, in how secret keys can be compromised,
+or with different ways of modelling authentication or secrecy. Clearly
+understanding this when reading a model is one of the main
+challenge.</p>
+</div>
 <h2 id="symbolic-security-definitions">Symbolic security
 definitions</h2>
-<p>Tamarin/Proverif, trace based</p>
+<div class="todo">
+<p><span style="color: ##fffd34;">⚙ WIP/TODO </span></p>
+<p>Notion of events and attacker knwoledge, model compromise inside the
+protocol model, snippets of ProVerif queries + Tamarin lemmas.</p>
+</div>
 <h2 id="computational-security-definitions">Computational security
 definitions</h2>
 <h3 id="monolithic-ake-style-security">Monolithic AKE style
 security</h3>
-<p>Easycrypt + notes</p>
+<div class="todo">
+<p><span style="color: ##fffd34;">⚙ WIP/TODO </span></p>
+<p>High level summary of AKE notes, link to doc, snippets of
+easycrypt?</p>
+</div>
 <h3 id="split-trace-and-indistinguishability-based-style">Split trace
 and indistinguishability based style</h3>
-<p>Squirrel/CryptoVerif</p>
+<div class="todo">
+<p><span style="color: ##fffd34;">⚙ WIP/TODO </span></p>
+<p>Describe the mix approach, both with trace based dedicated
+authentication queries, and some indistinguishability based secrecy
+queries.</p>
+<p>snippets of CryptoVerif / Squirrel queries.</p>
+</div>
 <h1 id="proving">Proving</h1>
+<div class="tip">
+<p><span style="color: #1a7f37;">💡 Tip</span></p>
+<p>If your only goal was to better understand what kind of guarantees
+are actually provided by the different models or tools, you can stop
+here!</p>
+</div>
+<p>We now brieffly delve into how the tools are proved.</p>
 <h2 id="automated">Automated</h2>
-<p>ProVerif/Tamarin/CryptoVerif</p>
+<div class="todo">
+<p><span style="color: ##fffd34;">⚙ WIP/TODO </span></p>
+<p>Describe the automated approach, ProVerif Tamarin</p>
+<p>A little bit CryptoVerif</p>
+</div>
+<h3 id="heuristic-guidance">Heuristic guidance</h3>
+<div class="todo">
+<p><span style="color: ##fffd34;">⚙ WIP/TODO </span></p>
+<p>Use of helper lemmas in Tamarin/ProVerif oracles, additional
+params.</p>
+</div>
 <h2 id="interactive-proofs">Interactive Proofs</h2>
 <h3 id="logic-based-reasoning">Logic based reasoning</h3>
+<div class="todo">
+<p><span style="color: ##fffd34;">⚙ WIP/TODO </span></p>
 <p>Easycrypt/Squirrel</p>
+</div>
 <h3 id="restricted-tactic-applications">Restricted tactic
 applications</h3>
-<p>CryptoVerif/Tamarin</p>
-<h3 id="heuristic-guidance">Heuristic guidance</h3>
-<p>Tamarin/ProVerif</p>
+<div class="todo">
+<p><span style="color: ##fffd34;">⚙ WIP/TODO </span></p>
+<p>CryptoVerif/Tamarin interactive mode</p>
+</div>
+<h1 id="additional-ressources">Additional ressources</h1>
+<p>That’s it!</p>
+<p>Hopefully, you should now be able to browse the repository and
+understand at least at a high-level the models. If you want to delve
+deeper into one of the tools, here are for each some additional
+ressources.</p>
+<div class="todo">
+<p><span style="color: ##fffd34;">⚙ WIP/TODO </span></p>
+<p>Add links to doc/manual/tutorial for tools!</p>
+</div>
 <h1 id="wip-guidelines-for-style">WIP guidelines for style</h1>
 <div class="note">
 <p><span style="color: #0969da;">🗅 Note</span></p>
@@ -339,6 +465,10 @@ applications</h3>
 <div class="caution">
 <p><span style="color: #cf222e;">⚠ Caution</span></p>
 <p>This is a warning.</p>
+</div>
+<div class="todo">
+<p><span style="color: ##fffd34;">⚙ WIP/TODO </span></p>
+<p>This is a TODO.</p>
 </div>
 <h1 class="unnumbered" id="references">References</h1>
 <div id="refs" class="references csl-bib-body" role="list">
