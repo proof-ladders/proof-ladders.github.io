@@ -8,16 +8,32 @@
     <list name="reserved keywords">
       <item>abstract</item>
       <item>lemma</item>
-      <item>type</item>      
+      <item>type</item>
+      <item>module</item>
+      <item>fun</item>
+      <item>letfun</item>      
+      <item>reduc</item>
+      <item>equation</item>      
+      <item>equations</item>
+      <item>functions</item>
+      <item>proc</item>
+      <item>axiom</item>            
     </list>
     <list name="our types">
       <item>bitstring</item>
       <item>enckey</item>
+      <item>keyseed</item>
+      <item>sign_seed</item>      
+      <item>pkey</item>
+      <item>skey</item>
+      <item>sig</item>
+      <item>msg</item>
+      <item>bool</item>         
     </list>    
     <contexts>
       <context attribute="Normal" lineEndContext="#stay" name="code">
         <keyword attribute="Keyword" context="#stay" String="reserved keywords" />
-        <keyword attribute="Type"    context="#stay" String="our types" additionalDeliminator=",),("/>
+        <keyword attribute="Type"    context="#stay" String="our types" additionalDeliminator=",:"/>
         <RegExpr attribute="Decimal" context="#stay" String="[0-9]+&wordsep;" />
         <DetectChar attribute="Char"   context="char"   char="'" />
         <DetectChar attribute="String" context="string" char="&quot;" />
@@ -73,4 +89,3 @@
               additionalDeliminator=".,()" />
   </general>
 </language>
-<!-- kate: replace-tabs on; tab-width 2; indent-width 2; -->

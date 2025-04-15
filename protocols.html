@@ -80,6 +80,37 @@
     code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
   </style>
 
+<!-- extra style definitions for nice blocks -->
+
+    <style>
+.note, .tip, .important, .warning, .caution {
+    padding: 0.7em;
+}
+
+.note {
+	border-left: solid #0969da 6px;
+	border-radius: 4px; 
+}
+
+.tip {
+	border-left: solid #1a7f37 6px;
+	border-radius: 4px; 
+}
+
+.important {
+	border-left: solid #8250df 6px;
+	border-radius: 4px; 
+}
+.warning {
+	border-left: solid #9a6700 6px;
+	border-radius: 4px; 
+}
+
+.caution {
+	border-left: solid #cf222e 6px;
+	border-radius: 4px; 
+}
+    </style>
 </head>
 
 <body>
@@ -127,20 +158,144 @@ role="doc-biblioref">[3]</a></span>, Tamarin <span class="citation"
 data-cites="tamarin"><a href="#ref-tamarin"
 role="doc-biblioref">[4]</a></span> and Squirrel <span class="citation"
 data-cites="squirrel"><a href="#ref-squirrel"
-role="doc-biblioref">[5]</a></span>.</p>
+role="doc-biblioref">[5]</a></span>. We present how one thinks about
+modeling a protocol in a formal way, by going through the signed Diffie
+Helman key-exchange (problem 2). We assume that people are familiar with
+finite groups, signatures and hash functions.</p>
 <h1 id="modeling-the-protocol-wip">Modeling the protocol (⏳ 🚧 WIP 🚧
 ⏳)</h1>
-<h2 id="abstract-functions">Abstract functions</h2>
+<p>To model a protocol, we have to model the computations made by a
+given agent, how it receives/send values over the network, and then
+define concrete execution scenarios where multiple agents can interact
+together.</p>
+<h2 id="abstract-functions-and-domains">Abstract functions and
+domains</h2>
+<p>In any model, we start by specifying at which level of abstraction we
+are going to work for the primitives and computations made by our
+protocol agents. This part can be seen as defining the interface of a
+library that our protocol relies on. When faced with a real word
+example, we already have several choices. Do I model my hash function as
+a single unary abstract hash function, or as a hmac based on an abstract
+hash function, or a hmac based on a fixed block iterated hash function,
+and so on. For our problem, which is a high-level specification, we
+already have the layer of abstraction, we need to define abstract
+signatures, hash functions and a DH group, and not specify more than
+that how they might actually be instantiated.</p>
+<div class="note">
+<p><span style="color: #0969da;">🗅 Note</span></p>
+<p>In this first step, we only care about modeling correctness
+conditions of those primitives, so that our protocol does execute,
+security notions will be discussed later.</p>
+</div>
+<p>Let’s consider the case of signatures. We have to define the way to
+sample keys. Already, many small variants appear depending on the tools
+capabilities. While those differences might not look very deep, they can
+lead to subtle differences in the final guarantees, we thus take the
+time to brieffly go through them. EasyCrypt can define abstract
+functions that can be either deterministic or probabilistic, we only
+have to define domains for the public keys, private keys, signatures and
+messages, and then say that a signature has the three desired algorithms
+of the expected types.</p>
 <div class="sourceCode" id="cb1"><pre
-class="sourceCode crosstoolsyntax"><code class="sourceCode crosstoolsyntax"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">type</span> <span class="dt">enckey</span><span class="ot">.</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="kw">abstract</span> senc<span class="ot">(</span><span class="dt">bitstring</span>, <span class="dt">enckey</span><span class="ot">)</span> : <span class="dt">bitstring</span><span class="ot">.</span> <span class="co">(* cool enc fun *)</span></span></code></pre></div>
-<h2 id="protocol-actions">Protocol actions</h2>
+class="sourceCode crosstoolsyntax"><code class="sourceCode crosstoolsyntax"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">(* EasyCrypt *)</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="kw">type</span> <span class="dt">pkey</span>, <span class="dt">skey</span>, <span class="dt">sig</span>, <span class="dt">msg</span><span class="ot">.</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="kw">module</span> <span class="kw">type</span> SigScheme = <span class="ot">{</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="kw">proc</span> keygen<span class="ot">()</span>: <span class="dt">pkey</span> * <span class="dt">skey</span>               </span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="co">(* from no arguments, probabilistic procedure returns a pair of type pkey * skey *)</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="kw">proc</span> sign<span class="ot">(_</span>: <span class="dt">skey</span>, <span class="ot">_</span>: <span class="dt">msg</span><span class="ot">)</span>: <span class="dt">sig</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  <span class="kw">proc</span> verify<span class="ot">(_</span>: <span class="dt">pkey</span>, <span class="ot">_</span>: <span class="dt">msg</span>, <span class="ot">_</span>: <span class="dt">sig</span><span class="ot">)</span>: <span class="dt">bool</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="ot">}.</span></span></code></pre></div>
+<p>Interestingly, some tools that typically cannot prove executability
+properties (for sanity checks) do not need to declare the correctness
+property of the signature and verify functions, as they might not be
+needed to actually prove the security. In the EasyCrypt example, the
+correctness is typically not given.</p>
+<p>The other tools can only define abstract deterministic functions
+(which is actually usefull on the proving side), so we have to make
+explicit the randomness as parts of the argument. Typically, the keygen
+function needs a new seed, for which we also define a domain, and the
+signature also need an addition source of randomness. Both in Squirrel
+and CryptoVerif, declaratations are rather similar and we can use an
+equation to define the correctness of the verification function.</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode crosstoolsyntax"><code class="sourceCode crosstoolsyntax"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">(* CryptoVerif *)</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="kw">type</span> <span class="dt">keyseed</span> [large,fixed]<span class="ot">.</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co">(* [large,fixed] =&gt; all elements are, given a security parameter, of a</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co">fixed length, and with negligible chance of collisions. *)</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="kw">type</span> <span class="dt">pkey</span> [bounded]<span class="ot">.</span> <span class="co">(* [bounded] =&gt; all elements have a maximal length. *)</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="kw">type</span> <span class="dt">skey</span> [bounded]<span class="ot">.</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="kw">fun</span> skgen<span class="ot">(</span><span class="dt">keyseed</span><span class="ot">)</span>:skey<span class="ot">.</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="kw">fun</span> pkgen<span class="ot">(</span><span class="dt">keyseed</span><span class="ot">)</span>:skey<span class="ot">.</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="co">(* bitstring is a default builtin type *)</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="kw">fun</span> SIGsign<span class="ot">(</span><span class="dt">bitstring</span>, <span class="dt">skey</span><span class="ot">)</span>: <span class="dt">bitstring</span><span class="ot">.</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="kw">fun</span> SIGverify<span class="ot">(</span><span class="dt">bitstring</span>, <span class="dt">pkey</span>, <span class="dt">bitstring</span><span class="ot">)</span>: <span class="dt">bool</span><span class="ot">.</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="kw">equation</span> forall m:bitstring, r:keyseed<span class="ot">;</span> </span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>    SIGverify<span class="ot">(</span>m, pkgen<span class="ot">(</span>r<span class="ot">)</span>, SIGsign<span class="ot">(</span>m, skgen<span class="ot">(</span>r<span class="ot">)))</span> = true<span class="ot">.</span></span></code></pre></div>
+<p>In some tools, we tend to consider that we don’t have a seed used to
+derive keypairs, but rather that we sample uniformly at random a secret
+key, and have a way to derive a public key from a secret key. The actual
+declaration looks like this.</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode crosstoolsyntax"><code class="sourceCode crosstoolsyntax"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">(* Squirrel *)</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="kw">type</span> <span class="dt">skey</span> [large]<span class="ot">.</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="kw">type</span> <span class="dt">pkey</span><span class="ot">.</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co">(* message is a default builtin type *)</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="kw">abstract</span> pk : <span class="dt">skey</span> -&gt; <span class="dt">pkey</span><span class="ot">.</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="kw">abstract</span> SIGsign : message * <span class="dt">skey</span> -&gt; message<span class="ot">.</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="kw">abstract</span> SIGverify : message * message * <span class="dt">pkey</span> -&gt; <span class="dt">bool</span><span class="ot">.</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="kw">axiom</span> [any] SIGverify<span class="ot">_</span>correct <span class="ot">(</span>x,y:message,k : <span class="dt">skey</span><span class="ot">)</span> : </span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>     SIGverify<span class="ot">(</span>x, SIGsign<span class="ot">(</span>x,k<span class="ot">)</span>, pk<span class="ot">(</span>k<span class="ot">)).</span></span></code></pre></div>
+<p>This model is also common for ProVerif/Tamarin, and more generally
+the symbolic model.</p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode crosstoolsyntax"><code class="sourceCode crosstoolsyntax"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co">(* ProVerif *)</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="kw">type</span> <span class="dt">skey</span><span class="ot">.</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="kw">type</span> <span class="dt">pkey</span><span class="ot">.</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="kw">fun</span> pk<span class="ot">(</span><span class="dt">skey</span><span class="ot">)</span>:pkey<span class="ot">.</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="kw">fun</span> SIGsign<span class="ot">(</span><span class="dt">bitstring</span>, <span class="dt">skey</span><span class="ot">)</span>: <span class="dt">bitstring</span><span class="ot">.</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="kw">reduc</span> forall m: <span class="dt">bitstring</span>, k: <span class="dt">skey</span><span class="ot">;</span> </span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>    SIGverify<span class="ot">(</span>SIGsign<span class="ot">(</span>m,k<span class="ot">)</span>,m, pk<span class="ot">(</span>k<span class="ot">))</span> = true<span class="ot">.</span> </span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="co">(* SIGverify is directly defined through the equation is verifies. *)</span></span></code></pre></div>
+<p>Tamarin is a corner case where we do not define any specific domain
+or type, everything is of the same message type, one defines functions
+with their arity, and then the equations over them.</p>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode crosstoolsyntax"><code class="sourceCode crosstoolsyntax"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co">(* Tamarin *)</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="kw">functions</span>: skgen/1, pkgen/1, SIGsign/2, SIGverify/3, True/0</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="kw">equations</span>: SIGverify<span class="ot">(</span>SIGsign<span class="ot">(</span>m, skgen<span class="ot">(</span>seed<span class="ot">))</span>,m, pkgen<span class="ot">(</span>seed<span class="ot">))</span> = True</span></code></pre></div>
+<div class="tip">
+<p><span style="color: #1a7f37;">💡 Tip</span></p>
+<p>Most tools offer builtins supports or library, we don’t have to
+redefine everything from scratch all the time.</p>
+</div>
+<h2 id="modeling-an-agent">Modeling an agent</h2>
+<p>We have modeled the library that agents will have access to. We now
+need to model how one session of an agent may sequentially execute the
+protocol, and notably receive or send messages on the network. The
+network is assumed to be attacker controlled, we thus do not make a
+distinction between arguments received over a network or given by an
+attacker.</p>
 <h3 id="oracleprocedure-based">Oracle/procedure based</h3>
 <p>CryptoVerif EasyCrypt</p>
 <h3 id="pi-calculus-style">Pi-calculus style</h3>
 <p>ProVerif Squirrel</p>
 <h3 id="msr-based">MSR based</h3>
 <p>Tamarin</p>
+<h2 id="modeling-the-protocol">Modeling the protocol</h2>
 <h1 id="security-definitions">Security definitions</h1>
 <h2 id="symbolic-security-definitions">Symbolic security
 definitions</h2>
@@ -164,6 +319,27 @@ applications</h3>
 <p>CryptoVerif/Tamarin</p>
 <h3 id="heuristic-guidance">Heuristic guidance</h3>
 <p>Tamarin/ProVerif</p>
+<h1 id="wip-guidelines-for-style">WIP guidelines for style</h1>
+<div class="note">
+<p><span style="color: #0969da;">🗅 Note</span></p>
+<p>This is a note.</p>
+</div>
+<div class="tip">
+<p><span style="color: #1a7f37;">💡 Tip</span></p>
+<p>This is a tip.</p>
+</div>
+<div class="important">
+<p><span style="color: #8250df;">🖹 Important</span></p>
+<p>This is a warning.</p>
+</div>
+<div class="warning">
+<p><span style="color: #9a6700;">⚠ Warning</span></p>
+<p>This is a warning.</p>
+</div>
+<div class="caution">
+<p><span style="color: #cf222e;">⚠ Caution</span></p>
+<p>This is a warning.</p>
+</div>
 <h1 class="unnumbered" id="references">References</h1>
 <div id="refs" class="references csl-bib-body" role="list">
 <div id="ref-cryptoverif" class="csl-entry" role="listitem">

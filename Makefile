@@ -25,6 +25,7 @@ protocols.html: protocols_src.md $(TEMPLATE_HTML)
 	  --template $(TEMPLATE_HTML)\
           --citeproc\
 	  --syntax ressources/cross-tool-syntax.xml \
+	  -f markdown+fenced_divs \
 	  -t html -o $@ $<
 
 symmetric.html: symmetric_src.md $(TEMPLATE_HTML)
