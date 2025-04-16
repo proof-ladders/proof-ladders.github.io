@@ -21,7 +21,7 @@ The protocol repository is
 [here](https://github.com/proof-ladders/protocol-ladder). The problem
 set is presented in a [pdf
 file](https://github.com/proof-ladders/protocol-ladder/blob/main/Notes/main.pdf),
-we recommend to start the reading.
+we recommend starting the reading with the pdf, then coming back here.
 
 
 If you are familiar with formal methods, the [README of the protocol
@@ -32,7 +32,7 @@ analysis of one of the problems, with key insights into its modeling
 using CryptoVerif [@cryptoverif], EasyCrypt [@easycrypt], ProVerif
 [@proverif], Tamarin [@tamarin] and Squirrel [@squirrel]. We present
 how one thinks about modeling a protocol in a formal way, by going
-through the signed Diffie Helman key-exchange (problem 2). We assume
+through the signed Diffie Hellman key-exchange (problem 2). We assume
 that people are familiar with finite groups, signatures and hash
 functions.
 
@@ -53,8 +53,8 @@ are going to work for the primitives and computations made by our
 protocol agents. This part can be seen as defining the interface of a
 library that our protocol relies on. When faced with a real word
 example, we already have several choices. Do I model my hash function
-as a single unary abstract hash function, or as a hmac based on an
-abstract hash function, or a hmac based on a fixed block iterated hash
+as a single unary abstract hash function, or as a HMAC based on an
+abstract hash function, or a HMAC based on a fixed block iterated hash
 function, and so on. For our problem, which is a high-level
 specification, we already have the layer of abstraction, we need to
 define abstract signatures, hash functions and a DH group, and not
@@ -76,7 +76,7 @@ Let's consider the case of signatures. We have to define the way to
 sample keys. Already, many small variants appear depending on the
 tools capabilities. While those differences might not look very deep,
 they can lead to subtle differences in the final guarantees, we thus
-take the time to brieffly go through them. EasyCrypt can define
+take the time to briefly go through them. EasyCrypt can define
 abstract functions that can be either deterministic or probabilistic,
 we only have to define domains for the public keys, private keys,
 signatures and messages, and then say that a signature has the three
@@ -102,11 +102,11 @@ needed to actually prove the security. In the EasyCrypt example, the
 correctness is typically not given. 
 
 The other tools can only define abstract deterministic functions
-(which is actually usefull on the proving side), so we have to make
+(which is actually useful on the proving side), so we have to make
 explicit the randomness as parts of the argument. Typically, the
 keygen function needs a new seed, for which we also define a domain,
 and the signature also need an addition source of randomness. 
-Both in Squirrel and CryptoVerif, declaratations are rather similar
+Both in Squirrel and CryptoVerif, declarations are rather similar
 and we can use an equation to define the correctness of the
 verification function.
 
@@ -187,7 +187,7 @@ equations: SIGverify(SIGsign(m, skgen(seed)),m, pkgen(seed)) = True
 
 <span style="color: #1a7f37;">💡 Tip</span>
 
-Most tools offer builtins supports or library, we don't have to
+Most tools offer builtin supports or library, we don't have to
 redefine everything from scratch all the time.
 
 :::::
@@ -286,7 +286,7 @@ EasyCrypt syntax examples
 ### Pi-calculus style
 
 To model agents, a pi-calculus dialect makes us write in an imperative
-programing style, with `let` bindings, conditional branchings, but
+programming style, with `let` bindings, conditional branchings, but
 also add two commands for network interactions, `in(c,x)` and `out(c,t)`, which models
 receiving a value over the network and binding it to variable `x` or
 sending out value `t` on the network. The value `c` is meant to model
@@ -326,15 +326,15 @@ let Client(s_pk : pkey) =
 
 ```
 
-Squirrel syntax has mainly two diffrences. First, because we can only
+Squirrel syntax has mainly two differences. First, because we can only
 receive and send messages of type `message`, and thus have to add
 explicit type conversion functions (akin to
-serialization/deserialization functions). Second, in Squirrel, andom
+serialization/deserialization functions). Second, in Squirrel, random
 values are represented as "names", that can be indexed, e.g. by a
 session identifier.  Instead of sampling `x_sk` in the i-th Session of
 the Client, it will directly use the value `x_sk i`. This is
-equivalent to assuming that all secret values were precomputed at the
-begining of the universe (akin to eager sampling), and that we stored
+equivalent to assuming that all secret values were pre-computed at the
+beginning of the universe (akin to eager sampling), and that we stored
 in an array `x_sk` the list of the ephemeral of all clients.
 
 
@@ -422,6 +422,13 @@ tactics for Squirrel + user-defined functions.
 
 In the symbolic world, the cryptography is assumed to be ideal.
 
+::::: todo
+
+<span style="color: ##fffd34;">⚙ WIP/TODO </span>
+
+Symbolic model core ideas.
+
+:::::
 
 ::::: important
 
@@ -433,7 +440,7 @@ fashion many primitives, typically capturing the low-order points of
 X25519, the length-extension property of SHA2, and other subtle
 properties of signatures, KEMs, AEADs,...
 
-In addition, it also enable to model cases where the attacker is in
+In addition, it also enables modeling cases where the attacker is in
 fact stronger than in the usual computational model, for instance by
 letting the attacker chose at run time the output values of a hash
 function, as long as it does not make any collision.
