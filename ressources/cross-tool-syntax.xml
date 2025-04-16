@@ -17,7 +17,17 @@
       <item>equations</item>
       <item>functions</item>
       <item>proc</item>
-      <item>axiom</item>            
+      <item>axiom</item>
+      <item>forall</item>
+      <item>let</item>
+      <item>in</item>
+      <item>return</item>
+      <item>if</item>
+      <item>then</item>
+      <item>in</item>
+      <item>out</item>
+      <item>process</item>
+      <item>name</item>      
     </list>
     <list name="our types">
       <item>bitstring</item>
@@ -28,7 +38,12 @@
       <item>skey</item>
       <item>sig</item>
       <item>msg</item>
-      <item>bool</item>         
+      <item>bool</item>
+      <item>message</item>
+      <item>hashfunction</item>
+      <item>index</item>      
+      <item>Z</item>
+      <item>G</item>      
     </list>    
     <contexts>
       <context attribute="Normal" lineEndContext="#stay" name="code">

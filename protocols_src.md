@@ -122,15 +122,15 @@ fixed length, and with negligible chance of collisions. *)
 type pkey [bounded]. (* [bounded] => all elements have a maximal length. *)
 type skey [bounded].
 
-fun skgen(keyseed):skey.
-fun pkgen(keyseed):skey.
+fun skgen(keyseed) : skey.
+fun pkgen(keyseed) : skey.
 
 (* bitstring is a default builtin type *)
 fun SIGsign(bitstring, skey): bitstring.
 fun SIGverify(bitstring, pkey, bitstring): bool.
 
-equation forall m:bitstring, r:keyseed; 
-	SIGverify(m, pkgen(r), SIGsign(m, skgen(r))) = true.
+equation forall m : bitstring, r : keyseed; 
+	SIGverify(SIGsign(m, skgen(r)), m, pkgen(r)) = true.
 ```
 
 In some tools, we tend to consider that we don't have a seed used to
@@ -149,8 +149,8 @@ abstract pk : skey -> pkey.
 abstract SIGsign : message * skey -> message.
 abstract SIGverify : message * message * pkey -> bool.
 
-axiom [any] SIGverify_correct (x,y:message,k : skey) : 
-     SIGverify(x, SIGsign(x,k), pk(k)).
+axiom [any] SIGverify_correct (x,y : message, k : skey) : 
+     SIGverify(SIGsign(x,k), x, pk(k)).
 ```
 
 
@@ -162,11 +162,11 @@ symbolic model.
 type skey.
 type pkey.
 
-fun pk(skey):pkey.
+fun pk(skey) : pkey.
 
-fun SIGsign(bitstring, skey): bitstring.
+fun SIGsign(bitstring, skey) : bitstring.
 
-reduc forall m: bitstring, k: skey; 
+reduc forall m : bitstring, k : skey; 
 	SIGverify(SIGsign(m,k),m, pk(k)) = true. 
 (* SIGverify is directly defined through the equation is verifies. *)
 
@@ -202,6 +202,18 @@ network is assumed to be attacker controlled, we thus do not make a
 distinction between arguments received over a network or given by an
 attacker. 
 
+::::: important
+
+<span style="color: #8250df;">🖹 Important</span>
+
+In the remaining code snippets, we assume that all declarations have
+taken place, we thus have functions to compute Hash() and DH
+operations, as well as corresponding types. We do not detail it, and
+use explicit names everywhere.
+
+:::::
+
+
 ::::: caution
 
 <span style="color: #cf222e;">⚠ Caution</span>
@@ -234,25 +246,131 @@ This syntax is close to what cryptographers use, and is typically used
 in CryptoVerif and EasyCrypt.
 
 
+
+```CrossToolSyntax
+(* CryptoVerif *)
+
+(* We declare an explicit function to generate DH keypairs. *)
+letfun DHkeygen() =
+       a <-R Z;     (* this samples in the exponents Z. *)
+       (a, exp(g,a)).
+
+(* Client process *)
+(* We declare a macro parametrized by a Server public key 
+and a hash function, we'll see how to instantiate it later on. 
+*)
+
+let Client(hf : hashfunction, s_pkC : pkey) =
+  (* First oracle, that does not have any input. *)
+  OC1() :=
+    let (x_sk : Z, x_pk : G) = DHkeygen() in
+    return(x_pk);
+	
+    (* Second oracle, in sequential composition. *)
+    (* Directly expects two arguments, rather than a pair. *)
+    OC3(y_pk : G, s : bitstring) :=
+      if SIGverify(s, msg2(x_pk, y_pk), s_pkC) then    
+		kC <- Hash(hf, exp(y_pk, x_sk));
+	    0.
+```
+
 ::::: todo
 
 <span style="color: ##fffd34;">⚙ WIP/TODO </span>
 
- CryptoVerif and EasyCrypt syntax examples
+EasyCrypt syntax examples
 
 :::::
 
 
 ### Pi-calculus style
 
-::::: todo
+To model agents, a pi-calculus dialect makes us write in an imperative
+programing style, with `let` bindings, conditional branchings, but
+also add two commands for network interactions, `in(c,x)` and `out(c,t)`, which models
+receiving a value over the network and binding it to variable `x` or
+sending out value `t` on the network. The value `c` is meant to model
+a particular channel. Channels can be useful to model secret
+communications between agents, otherwise, having a single public
+channel is often enough. The last pi-calculus command is `new x :
+type`, which binds variable `x` to a new value in the type. This is
+akin to the sampling of a fresh value. We can model the client side 
+protocol as follows in ProVerif.
 
-<span style="color: ##fffd34;">⚙ WIP/TODO </span>
 
-Describe at a high-level the pi-calculus, then  ProVerif Squirrel examples
+```CrossToolSyntax
+(* ProVerif *)
 
-:::::
+(* We declare an explicit function to generate DH keypairs. *)
+letfun DHkeygen() =
+       new a : Z; (* this samples a new value in the exponents. *)
+       (a, exp(g,a)).
+	   
+(* Client process *)
+(* We declare a macro parametrized by a Server public key, we'll see
+how to instantiate it later on. *)
 
+let Client(s_pk : pkey) = 
+
+    (* First message *)	  
+    (* No input needed *)
+    let (x_sk : Z, x_pk : G) = DHkeygen() in
+    out(c, x_pk);
+
+    (* Second message *)
+	(* we directly do some pattern matching on the input. *)
+    in(c, (y_pk : G,sig : bitstring));
+    if SIGverify(sig, (x_pk,y_pk), s_pk) then
+       let k_C = Hash( exp(y_pk,x_sk)) in       
+       0.
+
+```
+
+Squirrel syntax has mainly two diffrences. First, because we can only
+receive and send messages of type `message`, and thus have to add
+explicit type conversion functions (akin to
+serialization/deserialization functions). Second, in Squirrel, andom
+values are represented as "names", that can be indexed, e.g. by a
+session identifier.  Instead of sampling `x_sk` in the i-th Session of
+the Client, it will directly use the value `x_sk i`. This is
+equivalent to assuming that all secret values were precomputed at the
+begining of the universe (akin to eager sampling), and that we stored
+in an array `x_sk` the list of the ephemeral of all clients.
+
+
+
+
+```CrossToolSyntax
+(* Squirrel *)
+
+(* We declare the names for the clients. *)
+(* ephemerals for Client  *)
+name x_sk : index -> Z.
+	   
+(* Client process *)
+(* We declare a macro parametrized by a session identifier, which is a
+replication index, we'll see how to instantiate it later on. *)
+
+process Client (i : index) =
+  (* We receive some server public key *)
+  (* We cannot pass this as argument to the Client macro, this is not
+  a technical limitation, just need some more implementation. *)
+  in(c, s_pk);
+
+  (* We compute our ephemeral *)
+  let x_sk = x_sk i in  (* we use the i-th value of the array x_sk. *)
+  let x_pk = gen^x_sk in
+
+  out(c, ofG(x_pk));
+
+  in(c, mA);
+  let y_pk = toG(fst(mA)) in
+  let sig = snd(mA) in
+  if SIGverify(< ofG(x_pk), ofG(y_pk)>, sig, s_pk) then
+    let gCS = y_pk^x_sk  in
+    let kC = Hash( ofG(gCS), kHash) in
+    null.
+```
 
 
 

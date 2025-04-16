@@ -235,15 +235,15 @@ class="sourceCode crosstoolsyntax"><code class="sourceCode crosstoolsyntax"><spa
 <span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="kw">type</span> <span class="dt">pkey</span> [bounded]<span class="ot">.</span> <span class="co">(* [bounded] =&gt; all elements have a maximal length. *)</span></span>
 <span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="kw">type</span> <span class="dt">skey</span> [bounded]<span class="ot">.</span></span>
 <span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="kw">fun</span> skgen<span class="ot">(</span><span class="dt">keyseed</span><span class="ot">)</span>:skey<span class="ot">.</span></span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="kw">fun</span> pkgen<span class="ot">(</span><span class="dt">keyseed</span><span class="ot">)</span>:skey<span class="ot">.</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="kw">fun</span> skgen<span class="ot">(</span><span class="dt">keyseed</span><span class="ot">)</span> : <span class="dt">skey</span><span class="ot">.</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="kw">fun</span> pkgen<span class="ot">(</span><span class="dt">keyseed</span><span class="ot">)</span> : <span class="dt">skey</span><span class="ot">.</span></span>
 <span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="co">(* bitstring is a default builtin type *)</span></span>
 <span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="kw">fun</span> SIGsign<span class="ot">(</span><span class="dt">bitstring</span>, <span class="dt">skey</span><span class="ot">)</span>: <span class="dt">bitstring</span><span class="ot">.</span></span>
 <span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="kw">fun</span> SIGverify<span class="ot">(</span><span class="dt">bitstring</span>, <span class="dt">pkey</span>, <span class="dt">bitstring</span><span class="ot">)</span>: <span class="dt">bool</span><span class="ot">.</span></span>
 <span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="kw">equation</span> forall m:bitstring, r:keyseed<span class="ot">;</span> </span>
-<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>    SIGverify<span class="ot">(</span>m, pkgen<span class="ot">(</span>r<span class="ot">)</span>, SIGsign<span class="ot">(</span>m, skgen<span class="ot">(</span>r<span class="ot">)))</span> = true<span class="ot">.</span></span></code></pre></div>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="kw">equation</span> <span class="kw">forall</span> m : <span class="dt">bitstring</span>, r : <span class="dt">keyseed</span><span class="ot">;</span> </span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>    SIGverify<span class="ot">(</span>SIGsign<span class="ot">(</span>m, skgen<span class="ot">(</span>r<span class="ot">))</span>, m, pkgen<span class="ot">(</span>r<span class="ot">))</span> = true<span class="ot">.</span></span></code></pre></div>
 <p>In some tools, we tend to consider that we don’t have a seed used to
 derive keypairs, but rather that we sample uniformly at random a secret
 key, and have a way to derive a public key from a secret key. The actual
@@ -256,11 +256,11 @@ class="sourceCode crosstoolsyntax"><code class="sourceCode crosstoolsyntax"><spa
 <span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co">(* message is a default builtin type *)</span></span>
 <span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="kw">abstract</span> pk : <span class="dt">skey</span> -&gt; <span class="dt">pkey</span><span class="ot">.</span></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="kw">abstract</span> SIGsign : message * <span class="dt">skey</span> -&gt; message<span class="ot">.</span></span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="kw">abstract</span> SIGverify : message * message * <span class="dt">pkey</span> -&gt; <span class="dt">bool</span><span class="ot">.</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="kw">abstract</span> SIGsign : <span class="dt">message</span> * <span class="dt">skey</span> -&gt; <span class="dt">message</span><span class="ot">.</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="kw">abstract</span> SIGverify : <span class="dt">message</span> * <span class="dt">message</span> * <span class="dt">pkey</span> -&gt; <span class="dt">bool</span><span class="ot">.</span></span>
 <span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="kw">axiom</span> [any] SIGverify<span class="ot">_</span>correct <span class="ot">(</span>x,y:message,k : <span class="dt">skey</span><span class="ot">)</span> : </span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>     SIGverify<span class="ot">(</span>x, SIGsign<span class="ot">(</span>x,k<span class="ot">)</span>, pk<span class="ot">(</span>k<span class="ot">)).</span></span></code></pre></div>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="kw">axiom</span> [any] SIGverify<span class="ot">_</span>correct <span class="ot">(</span>x,y : <span class="dt">message</span>, k : <span class="dt">skey</span><span class="ot">)</span> : </span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>     SIGverify<span class="ot">(</span>SIGsign<span class="ot">(</span>x,k<span class="ot">)</span>, x, pk<span class="ot">(</span>k<span class="ot">)).</span></span></code></pre></div>
 <p>This model is also common for ProVerif/Tamarin, and more generally
 the symbolic model.</p>
 <div class="sourceCode" id="cb4"><pre
@@ -268,11 +268,11 @@ class="sourceCode crosstoolsyntax"><code class="sourceCode crosstoolsyntax"><spa
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="kw">type</span> <span class="dt">skey</span><span class="ot">.</span></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="kw">type</span> <span class="dt">pkey</span><span class="ot">.</span></span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="kw">fun</span> pk<span class="ot">(</span><span class="dt">skey</span><span class="ot">)</span>:pkey<span class="ot">.</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="kw">fun</span> pk<span class="ot">(</span><span class="dt">skey</span><span class="ot">)</span> : <span class="dt">pkey</span><span class="ot">.</span></span>
 <span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="kw">fun</span> SIGsign<span class="ot">(</span><span class="dt">bitstring</span>, <span class="dt">skey</span><span class="ot">)</span>: <span class="dt">bitstring</span><span class="ot">.</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="kw">fun</span> SIGsign<span class="ot">(</span><span class="dt">bitstring</span>, <span class="dt">skey</span><span class="ot">)</span> : <span class="dt">bitstring</span><span class="ot">.</span></span>
 <span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="kw">reduc</span> forall m: <span class="dt">bitstring</span>, k: <span class="dt">skey</span><span class="ot">;</span> </span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="kw">reduc</span> <span class="kw">forall</span> m : <span class="dt">bitstring</span>, k : <span class="dt">skey</span><span class="ot">;</span> </span>
 <span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>    SIGverify<span class="ot">(</span>SIGsign<span class="ot">(</span>m,k<span class="ot">)</span>,m, pk<span class="ot">(</span>k<span class="ot">))</span> = true<span class="ot">.</span> </span>
 <span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="co">(* SIGverify is directly defined through the equation is verifies. *)</span></span></code></pre></div>
 <p>Tamarin is a corner case where we do not define any specific domain
@@ -295,6 +295,13 @@ protocol, and notably receive or send messages on the network. The
 network is assumed to be attacker controlled, we thus do not make a
 distinction between arguments received over a network or given by an
 attacker.</p>
+<div class="important">
+<p><span style="color: #8250df;">🖹 Important</span></p>
+<p>In the remaining code snippets, we assume that all declarations have
+taken place, we thus have functions to compute Hash() and DH operations,
+as well as corresponding types. We do not detail it, and use explicit
+names everywhere.</p>
+</div>
 <div class="caution">
 <p><span style="color: #cf222e;">⚠ Caution</span></p>
 <p>For this part, tools have disparate input languages with distinct
@@ -316,16 +323,114 @@ ones. For the Signed DH protocol, we need two oracles for the client as
 it receives two inputs, and a single one for the server.</p>
 <p>This syntax is close to what cryptographers use, and is typically
 used in CryptoVerif and EasyCrypt.</p>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode crosstoolsyntax"><code class="sourceCode crosstoolsyntax"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co">(* CryptoVerif *)</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co">(* We declare an explicit function to generate DH keypairs. *)</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="kw">letfun</span> DHkeygen<span class="ot">()</span> =</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>       a &lt;-R <span class="dt">Z</span><span class="ot">;</span>     <span class="co">(* this samples in the exponents Z. *)</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>       <span class="ot">(</span>a, exp<span class="ot">(</span>g,a<span class="ot">)).</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="co">(* Client process *)</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="co">(* We declare a macro parametrized by a Server public key </span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="co">and a hash function, we&#39;ll see how to instantiate it later on. </span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="co">*)</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> Client<span class="ot">(</span>hf : <span class="dt">hashfunction</span>, s<span class="ot">_</span>pkC : <span class="dt">pkey</span><span class="ot">)</span> =</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>  <span class="co">(* First oracle, that does not have any input. *)</span></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>  OC1<span class="ot">()</span> :=</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> <span class="ot">(</span>x<span class="ot">_</span>sk : <span class="dt">Z</span>, x<span class="ot">_</span>pk : <span class="dt">G</span><span class="ot">)</span> = DHkeygen<span class="ot">()</span> <span class="kw">in</span></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span><span class="ot">(</span>x<span class="ot">_</span>pk<span class="ot">);</span></span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>    <span class="co">(* Second oracle, in sequential composition. *)</span></span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>    <span class="co">(* Directly expects two arguments, rather than a pair. *)</span></span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>    OC3<span class="ot">(</span>y<span class="ot">_</span>pk : <span class="dt">G</span>, s : <span class="dt">bitstring</span><span class="ot">)</span> :=</span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>      <span class="kw">if</span> SIGverify<span class="ot">(</span>s, msg2<span class="ot">(</span>x<span class="ot">_</span>pk, y<span class="ot">_</span>pk<span class="ot">)</span>, s<span class="ot">_</span>pkC<span class="ot">)</span> <span class="kw">then</span>    </span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>        kC &lt;- Hash<span class="ot">(</span>hf, exp<span class="ot">(</span>y<span class="ot">_</span>pk, x<span class="ot">_</span>sk<span class="ot">));</span></span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>        <span class="dv">0</span><span class="ot">.</span></span></code></pre></div>
 <div class="todo">
 <p><span style="color: ##fffd34;">⚙ WIP/TODO </span></p>
-<p>CryptoVerif and EasyCrypt syntax examples</p>
+<p>EasyCrypt syntax examples</p>
 </div>
 <h3 id="pi-calculus-style">Pi-calculus style</h3>
-<div class="todo">
-<p><span style="color: ##fffd34;">⚙ WIP/TODO </span></p>
-<p>Describe at a high-level the pi-calculus, then ProVerif Squirrel
-examples</p>
-</div>
+<p>To model agents, a pi-calculus dialect makes us write in an
+imperative programing style, with <code>let</code> bindings, conditional
+branchings, but also add two commands for network interactions,
+<code>in(c,x)</code> and <code>out(c,t)</code>, which models receiving a
+value over the network and binding it to variable <code>x</code> or
+sending out value <code>t</code> on the network. The value
+<code>c</code> is meant to model a particular channel. Channels can be
+useful to model secret communications between agents, otherwise, having
+a single public channel is often enough. The last pi-calculus command is
+<code>new x : type</code>, which binds variable <code>x</code> to a new
+value in the type. This is akin to the sampling of a fresh value. We can
+model the client side protocol as follows in ProVerif.</p>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode crosstoolsyntax"><code class="sourceCode crosstoolsyntax"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co">(* ProVerif *)</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co">(* We declare an explicit function to generate DH keypairs. *)</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="kw">letfun</span> DHkeygen<span class="ot">()</span> =</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>       new a : <span class="dt">Z</span><span class="ot">;</span> <span class="co">(* this samples a new value in the exponents. *)</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>       <span class="ot">(</span>a, exp<span class="ot">(</span>g,a<span class="ot">)).</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>       </span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="co">(* Client process *)</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="co">(* We declare a macro parametrized by a Server public key, we&#39;ll see</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="co">how to instantiate it later on. *)</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> Client<span class="ot">(</span>s<span class="ot">_</span>pk : <span class="dt">pkey</span><span class="ot">)</span> = </span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>    <span class="co">(* First message *)</span>   </span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>    <span class="co">(* No input needed *)</span></span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> <span class="ot">(</span>x<span class="ot">_</span>sk : <span class="dt">Z</span>, x<span class="ot">_</span>pk : <span class="dt">G</span><span class="ot">)</span> = DHkeygen<span class="ot">()</span> <span class="kw">in</span></span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>    <span class="kw">out</span><span class="ot">(</span>c, x<span class="ot">_</span>pk<span class="ot">);</span></span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>    <span class="co">(* Second message *)</span></span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>    <span class="co">(* we directly do some pattern matching on the input. *)</span></span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>    <span class="kw">in</span><span class="ot">(</span>c, <span class="ot">(</span>y<span class="ot">_</span>pk : <span class="dt">G</span>,sig : <span class="dt">bitstring</span><span class="ot">));</span></span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>    <span class="kw">if</span> SIGverify<span class="ot">(</span><span class="dt">sig</span>, <span class="ot">(</span>x<span class="ot">_</span>pk,y<span class="ot">_</span>pk<span class="ot">)</span>, s<span class="ot">_</span>pk<span class="ot">)</span> <span class="kw">then</span></span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>       <span class="kw">let</span> k<span class="ot">_</span>C = Hash<span class="ot">(</span> exp<span class="ot">(</span>y<span class="ot">_</span>pk,x<span class="ot">_</span>sk<span class="ot">))</span> <span class="kw">in</span>       </span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>       <span class="dv">0</span><span class="ot">.</span></span></code></pre></div>
+<p>Squirrel syntax has mainly two diffrences. First, because we can only
+receive and send messages of type <code>message</code>, and thus have to
+add explicit type conversion functions (akin to
+serialization/deserialization functions). Second, in Squirrel, andom
+values are represented as “names”, that can be indexed, e.g. by a
+session identifier. Instead of sampling <code>x_sk</code> in the i-th
+Session of the Client, it will directly use the value
+<code>x_sk i</code>. This is equivalent to assuming that all secret
+values were precomputed at the begining of the universe (akin to eager
+sampling), and that we stored in an array <code>x_sk</code> the list of
+the ephemeral of all clients.</p>
+<div class="sourceCode" id="cb8"><pre
+class="sourceCode crosstoolsyntax"><code class="sourceCode crosstoolsyntax"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co">(* Squirrel *)</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co">(* We declare the names for the clients. *)</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co">(* ephemerals for Client  *)</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="kw">name</span> x<span class="ot">_</span>sk : <span class="dt">index</span> -&gt; <span class="dt">Z</span><span class="ot">.</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>       </span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="co">(* Client process *)</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="co">(* We declare a macro parametrized by a session identifier, which is a</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="co">replication index, we&#39;ll see how to instantiate it later on. *)</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a><span class="kw">process</span> Client <span class="ot">(</span>i : <span class="dt">index</span><span class="ot">)</span> =</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>  <span class="co">(* We receive some server public key *)</span></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>  <span class="co">(* We cannot pass this as argument to the Client macro, this is not</span></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a><span class="co">  a technical limitation, just need some more implementation. *)</span></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>  <span class="kw">in</span><span class="ot">(</span>c, s<span class="ot">_</span>pk<span class="ot">);</span></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>  <span class="co">(* We compute our ephemeral *)</span></span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>  <span class="kw">let</span> x<span class="ot">_</span>sk = x<span class="ot">_</span>sk i <span class="kw">in</span>  <span class="co">(* we use the i-th value of the array x_sk. *)</span></span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>  <span class="kw">let</span> x<span class="ot">_</span>pk = gen^x<span class="ot">_</span>sk <span class="kw">in</span></span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>  <span class="kw">out</span><span class="ot">(</span>c, ofG<span class="ot">(</span>x<span class="ot">_</span>pk<span class="ot">));</span></span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>  <span class="kw">in</span><span class="ot">(</span>c, mA<span class="ot">);</span></span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>  <span class="kw">let</span> y<span class="ot">_</span>pk = toG<span class="ot">(</span>fst<span class="ot">(</span>mA<span class="ot">))</span> <span class="kw">in</span></span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>  <span class="kw">let</span> <span class="dt">sig</span> = snd<span class="ot">(</span>mA<span class="ot">)</span> <span class="kw">in</span></span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>  <span class="kw">if</span> SIGverify<span class="ot">(</span>&lt; ofG<span class="ot">(</span>x<span class="ot">_</span>pk<span class="ot">)</span>, ofG<span class="ot">(</span>y<span class="ot">_</span>pk<span class="ot">)</span>&gt;, <span class="dt">sig</span>, s<span class="ot">_</span>pk<span class="ot">)</span> <span class="kw">then</span></span>
+<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> gCS = y<span class="ot">_</span>pk^x<span class="ot">_</span>sk  <span class="kw">in</span></span>
+<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> kC = Hash<span class="ot">(</span> ofG<span class="ot">(</span>gCS<span class="ot">)</span>, kHash<span class="ot">)</span> <span class="kw">in</span></span>
+<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a>    null<span class="ot">.</span></span></code></pre></div>
 <h3 id="msr-based">MSR based</h3>
 <div class="todo">
 <p><span style="color: ##fffd34;">⚙ WIP/TODO </span></p>
