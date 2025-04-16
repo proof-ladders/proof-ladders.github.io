@@ -148,7 +148,8 @@
 href="https://github.com/proof-ladders/protocol-ladder">here</a>. The
 problem set is presented in a <a
 href="https://github.com/proof-ladders/protocol-ladder/blob/main/Notes/main.pdf">pdf
-file</a>, we recommend to start the reading.</p>
+file</a>, we recommend starting the reading with the pdf, then coming
+back here.</p>
 <p>If you are familiar with formal methods, the <a
 href="https://github.com/proof-ladders/protocol-ladder">README of the
 protocol repository</a> gives you the keys to navigate the set of
@@ -166,8 +167,8 @@ role="doc-biblioref">[4]</a></span> and Squirrel <span class="citation"
 data-cites="squirrel"><a href="#ref-squirrel"
 role="doc-biblioref">[5]</a></span>. We present how one thinks about
 modeling a protocol in a formal way, by going through the signed Diffie
-Helman key-exchange (problem 2). We assume that people are familiar with
-finite groups, signatures and hash functions.</p>
+Hellman key-exchange (problem 2). We assume that people are familiar
+with finite groups, signatures and hash functions.</p>
 <h1 id="modeling-the-protocol-wip">Modeling the protocol (⏳ 🚧 WIP 🚧
 ⏳)</h1>
 <p>To model a protocol, we have to model the computations made by a
@@ -181,8 +182,8 @@ are going to work for the primitives and computations made by our
 protocol agents. This part can be seen as defining the interface of a
 library that our protocol relies on. When faced with a real word
 example, we already have several choices. Do I model my hash function as
-a single unary abstract hash function, or as a hmac based on an abstract
-hash function, or a hmac based on a fixed block iterated hash function,
+a single unary abstract hash function, or as a HMAC based on an abstract
+hash function, or a HMAC based on a fixed block iterated hash function,
 and so on. For our problem, which is a high-level specification, we
 already have the layer of abstraction, we need to define abstract
 signatures, hash functions and a DH group, and not specify more than
@@ -197,9 +198,9 @@ security notions will be discussed later.</p>
 sample keys. Already, many small variants appear depending on the tools
 capabilities. While those differences might not look very deep, they can
 lead to subtle differences in the final guarantees, we thus take the
-time to brieffly go through them. EasyCrypt can define abstract
-functions that can be either deterministic or probabilistic, we only
-have to define domains for the public keys, private keys, signatures and
+time to briefly go through them. EasyCrypt can define abstract functions
+that can be either deterministic or probabilistic, we only have to
+define domains for the public keys, private keys, signatures and
 messages, and then say that a signature has the three desired algorithms
 of the expected types.</p>
 <div class="sourceCode" id="cb1"><pre
@@ -219,11 +220,11 @@ property of the signature and verify functions, as they might not be
 needed to actually prove the security. In the EasyCrypt example, the
 correctness is typically not given.</p>
 <p>The other tools can only define abstract deterministic functions
-(which is actually usefull on the proving side), so we have to make
+(which is actually useful on the proving side), so we have to make
 explicit the randomness as parts of the argument. Typically, the keygen
 function needs a new seed, for which we also define a domain, and the
 signature also need an addition source of randomness. Both in Squirrel
-and CryptoVerif, declaratations are rather similar and we can use an
+and CryptoVerif, declarations are rather similar and we can use an
 equation to define the correctness of the verification function.</p>
 <div class="sourceCode" id="cb2"><pre
 class="sourceCode crosstoolsyntax"><code class="sourceCode crosstoolsyntax"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">(* CryptoVerif *)</span></span>
@@ -259,7 +260,7 @@ class="sourceCode crosstoolsyntax"><code class="sourceCode crosstoolsyntax"><spa
 <span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="kw">abstract</span> SIGsign : <span class="dt">message</span> * <span class="dt">skey</span> -&gt; <span class="dt">message</span><span class="ot">.</span></span>
 <span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="kw">abstract</span> SIGverify : <span class="dt">message</span> * <span class="dt">message</span> * <span class="dt">pkey</span> -&gt; <span class="dt">bool</span><span class="ot">.</span></span>
 <span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="kw">axiom</span> [any] SIGverify<span class="ot">_</span>correct <span class="ot">(</span>x,y : <span class="dt">message</span>, k : <span class="dt">skey</span><span class="ot">)</span> : </span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="kw">axiom</span> [any] SIGverify<span class="ot">_</span>correct <span class="ot">(</span>x,y : <span class="dt">message</span>, k : <span class="dt">skey</span><span class="ot">)</span> : g</span>
 <span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>     SIGverify<span class="ot">(</span>SIGsign<span class="ot">(</span>x,k<span class="ot">)</span>, x, pk<span class="ot">(</span>k<span class="ot">)).</span></span></code></pre></div>
 <p>This model is also common for ProVerif/Tamarin, and more generally
 the symbolic model.</p>
@@ -285,7 +286,7 @@ class="sourceCode crosstoolsyntax"><code class="sourceCode crosstoolsyntax"><spa
 <span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="kw">equations</span>: SIGverify<span class="ot">(</span>SIGsign<span class="ot">(</span>m, skgen<span class="ot">(</span>seed<span class="ot">))</span>,m, pkgen<span class="ot">(</span>seed<span class="ot">))</span> = True</span></code></pre></div>
 <div class="tip">
 <p><span style="color: #1a7f37;">💡 Tip</span></p>
-<p>Most tools offer builtins supports or library, we don’t have to
+<p>Most tools offer builtin supports or library, we don’t have to
 redefine everything from scratch all the time.</p>
 </div>
 <h2 id="modeling-an-agent">Modeling an agent</h2>
@@ -354,23 +355,24 @@ class="sourceCode crosstoolsyntax"><code class="sourceCode crosstoolsyntax"><spa
 </div>
 <h3 id="pi-calculus-style">Pi-calculus style</h3>
 <p>To model agents, a pi-calculus dialect makes us write in an
-imperative programing style, with <code>let</code> bindings, conditional
-branchings, but also add two commands for network interactions,
-<code>in(c,x)</code> and <code>out(c,t)</code>, which models receiving a
-value over the network and binding it to variable <code>x</code> or
-sending out value <code>t</code> on the network. The value
-<code>c</code> is meant to model a particular channel. Channels can be
-useful to model secret communications between agents, otherwise, having
-a single public channel is often enough. The last pi-calculus command is
-<code>new x : type</code>, which binds variable <code>x</code> to a new
-value in the type. This is akin to the sampling of a fresh value. We can
-model the client side protocol as follows in ProVerif.</p>
+imperative programming style, with <code>let</code> bindings,
+conditional branching, but also add two commands for network
+interactions, <code>in(c,x)</code> and <code>out(c,t)</code>, which
+models receiving a value over the network and binding it to variable
+<code>x</code> or sending out value <code>t</code> on the network. The
+value <code>c</code> is meant to model a particular channel. Channels
+can be useful to model secret communications between agents, otherwise,
+having a single public channel is often enough. The last pi-calculus
+command is <code>new x : type</code>, which binds variable
+<code>x</code> to a new value in the type. This is akin to the sampling
+of a fresh value. We can model the client side protocol as follows in
+ProVerif.</p>
 <div class="sourceCode" id="cb7"><pre
 class="sourceCode crosstoolsyntax"><code class="sourceCode crosstoolsyntax"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co">(* ProVerif *)</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co">(* We declare an explicit function to generate DH keypairs. *)</span></span>
 <span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="kw">letfun</span> DHkeygen<span class="ot">()</span> =</span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>       new a : <span class="dt">Z</span><span class="ot">;</span> <span class="co">(* this samples a new value in the exponents. *)</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>       <span class="kw">new</span> a : <span class="dt">Z</span><span class="ot">;</span> <span class="co">(* this samples a new value in the exponents. *)</span></span>
 <span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>       <span class="ot">(</span>a, exp<span class="ot">(</span>g,a<span class="ot">)).</span></span>
 <span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>       </span>
 <span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="co">(* Client process *)</span></span>
@@ -386,19 +388,19 @@ class="sourceCode crosstoolsyntax"><code class="sourceCode crosstoolsyntax"><spa
 <span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>    <span class="co">(* Second message *)</span></span>
 <span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>    <span class="co">(* we directly do some pattern matching on the input. *)</span></span>
-<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>    <span class="kw">in</span><span class="ot">(</span>c, <span class="ot">(</span>y<span class="ot">_</span>pk : <span class="dt">G</span>,sig : <span class="dt">bitstring</span><span class="ot">));</span></span>
-<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>    <span class="kw">if</span> SIGverify<span class="ot">(</span><span class="dt">sig</span>, <span class="ot">(</span>x<span class="ot">_</span>pk,y<span class="ot">_</span>pk<span class="ot">)</span>, s<span class="ot">_</span>pk<span class="ot">)</span> <span class="kw">then</span></span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>    <span class="kw">in</span><span class="ot">(</span>c, <span class="ot">(</span>y<span class="ot">_</span>pk : <span class="dt">G</span>,sign : <span class="dt">bitstring</span><span class="ot">));</span></span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>    <span class="kw">if</span> SIGverify<span class="ot">(</span>sign, <span class="ot">(</span>x<span class="ot">_</span>pk,y<span class="ot">_</span>pk<span class="ot">)</span>, s<span class="ot">_</span>pk<span class="ot">)</span> <span class="kw">then</span></span>
 <span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>       <span class="kw">let</span> k<span class="ot">_</span>C = Hash<span class="ot">(</span> exp<span class="ot">(</span>y<span class="ot">_</span>pk,x<span class="ot">_</span>sk<span class="ot">))</span> <span class="kw">in</span>       </span>
 <span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>       <span class="dv">0</span><span class="ot">.</span></span></code></pre></div>
-<p>Squirrel syntax has mainly two diffrences. First, because we can only
-receive and send messages of type <code>message</code>, and thus have to
-add explicit type conversion functions (akin to
-serialization/deserialization functions). Second, in Squirrel, andom
+<p>Squirrel syntax has mainly two differences. First, because we can
+only receive and send messages of type <code>message</code>, and thus
+have to add explicit type conversion functions (akin to
+serialization/deserialization functions). Second, in Squirrel, random
 values are represented as “names”, that can be indexed, e.g. by a
 session identifier. Instead of sampling <code>x_sk</code> in the i-th
 Session of the Client, it will directly use the value
 <code>x_sk i</code>. This is equivalent to assuming that all secret
-values were precomputed at the begining of the universe (akin to eager
+values were pre-computed at the beginning of the universe (akin to eager
 sampling), and that we stored in an array <code>x_sk</code> the list of
 the ephemeral of all clients.</p>
 <div class="sourceCode" id="cb8"><pre
@@ -426,15 +428,93 @@ class="sourceCode crosstoolsyntax"><code class="sourceCode crosstoolsyntax"><spa
 <span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>  <span class="kw">in</span><span class="ot">(</span>c, mA<span class="ot">);</span></span>
 <span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>  <span class="kw">let</span> y<span class="ot">_</span>pk = toG<span class="ot">(</span>fst<span class="ot">(</span>mA<span class="ot">))</span> <span class="kw">in</span></span>
-<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>  <span class="kw">let</span> <span class="dt">sig</span> = snd<span class="ot">(</span>mA<span class="ot">)</span> <span class="kw">in</span></span>
-<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>  <span class="kw">if</span> SIGverify<span class="ot">(</span>&lt; ofG<span class="ot">(</span>x<span class="ot">_</span>pk<span class="ot">)</span>, ofG<span class="ot">(</span>y<span class="ot">_</span>pk<span class="ot">)</span>&gt;, <span class="dt">sig</span>, s<span class="ot">_</span>pk<span class="ot">)</span> <span class="kw">then</span></span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>  <span class="kw">let</span> sign = snd<span class="ot">(</span>mA<span class="ot">)</span> <span class="kw">in</span></span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>  <span class="kw">if</span> SIGverify<span class="ot">(</span>&lt; ofG<span class="ot">(</span>x<span class="ot">_</span>pk<span class="ot">)</span>, ofG<span class="ot">(</span>y<span class="ot">_</span>pk<span class="ot">)</span>&gt;, sign, s<span class="ot">_</span>pk<span class="ot">)</span> <span class="kw">then</span></span>
 <span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> gCS = y<span class="ot">_</span>pk^x<span class="ot">_</span>sk  <span class="kw">in</span></span>
 <span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> kC = Hash<span class="ot">(</span> ofG<span class="ot">(</span>gCS<span class="ot">)</span>, kHash<span class="ot">)</span> <span class="kw">in</span></span>
 <span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a>    null<span class="ot">.</span></span></code></pre></div>
-<h3 id="msr-based">MSR based</h3>
-<div class="todo">
-<p><span style="color: ##fffd34;">⚙ WIP/TODO </span></p>
-<p>MSR core ides + Tamarin snippet</p>
+<h3 id="multi-set-rewriting-based-syntax">Multi-Set Rewriting based
+syntax</h3>
+<p>We can model an agent by providing its transition rules between one
+state and another. This is how Tamarin models protocols, using so-called
+Multi-Set Rewriting (MSR) rules. If we denote by
+<code>StateC(C,x_sk)</code> the fact that a client <code>C</code> is in
+the intermediate state of the protocol, we need to define a rule which
+can consume some input, samples a fresh <code>x_sk</code> and send out
+the corresponding public key. Tamarin relies on a set of builtin facts
+to enable this, with :</p>
+<ul>
+<li><code>In(x)</code> which models the fact that an input of value
+<code>x</code> is available on the network and can be consumed by a
+transition rule;<br />
+</li>
+<li><code>Fr(n)</code> which models the fact that a fresh value
+<code>n</code> is available and can be consumed by a transition
+rule.<br />
+</li>
+<li><code>Out(t)</code> which models the fact that an output is sent
+over the network;</li>
+</ul>
+<p>With this in mind, the first rule to initialize a client is as
+follows.</p>
+<div class="sourceCode" id="cb9"><pre
+class="sourceCode crosstoolsyntax"><code class="sourceCode crosstoolsyntax"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co">(* Tamarin *)</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="kw">rule</span> Client<span class="ot">_</span>Init:</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="kw">let</span> x<span class="ot">_</span>pk = <span class="ch">&#39;g&#39;</span>^x<span class="ot">_</span>sk <span class="kw">in</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  [ <span class="kw">Fr</span><span class="ot">(</span>~x<span class="ot">_</span>sk<span class="ot">)</span>]   <span class="co">(* if a fresh value x_sk is available *)</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>     <span class="co">--&gt;</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>  [ <span class="kw">Out</span><span class="ot">(</span>&lt;x<span class="ot">_</span>pk&gt;<span class="ot">)</span>, <span class="kw">StateC</span><span class="ot">(</span>C, x<span class="ot">_</span>sk<span class="ot">)</span> ]  </span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>  <span class="co">(* we send the correspinding public key  out and create an intermediate client state. *)</span></span></code></pre></div>
+<p>To define the next and final client step, we also define an
+additional fact <code>!Pk(S, s_pk)</code> which can be read by a rule
+and models the fact that <code>s_pk</code> is the honestly produced
+public key of Server <code>S</code> (the <code>!</code> prefix means
+that here we define a <em>persistent</em> fact, which can be used an
+input to transition rules but will not be consumed). In addition, we
+also need to be able to add the restriction that a transition can only
+be executed if some check succeeds. We add to this end an
+<code>Eq(x,y)</code> event, that we can use to lable transitions
+functions, and for which we define that such an event can only occur
+when <code>x=y</code>.</p>
+<div class="sourceCode" id="cb10"><pre
+class="sourceCode crosstoolsyntax"><code class="sourceCode crosstoolsyntax"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co">(* Tamarin *)</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="kw">rule</span> Client<span class="ot">_</span>Accepts:</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="kw">let</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    m = &lt;y<span class="ot">_</span>pk, serverSign&gt;</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    x<span class="ot">_</span>pk = <span class="ch">&#39;g&#39;</span>^x<span class="ot">_</span>sk</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>    dh<span class="ot">_</span>output = y<span class="ot">_</span>pk^x<span class="ot">_</span>sk</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>    K<span class="ot">_</span>C = h<span class="ot">(</span>dh<span class="ot">_</span>output<span class="ot">)</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>  <span class="kw">in</span></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>  [ <span class="kw">StateC</span><span class="ot">(</span>C, x<span class="ot">_</span>sk<span class="ot">)</span>, </span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>  <span class="co">(* We consume the intermediate state produced by</span></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a><span class="co">    the previous rule *)</span></span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>    !Pk<span class="ot">(</span>S, s<span class="ot">_</span>pk<span class="ot">)</span>,</span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>    <span class="co">(* We read the value of an available public key. *)</span></span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>    <span class="kw">In</span><span class="ot">(</span>m<span class="ot">)</span></span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>    <span class="co">(* we receive the actual message *)</span></span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>    ]</span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>  <span class="co">--[  Eq(verify(serverSign, &lt;x_pk, y_pk&gt;, s_pk), true)]-&gt;</span></span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a>  [ ]</span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a><span class="kw">restriction</span> Eq:</span>
+<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a><span class="co">(* We express the restriction in a first-order temporal logic. *)</span></span>
+<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;All x y #i. </span></span>
+<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a><span class="st">         Eq(x, y) @ #i  </span></span>
+<span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a><span class="st">         (* Whenever at step i in some protocol</span></span>
+<span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a><span class="st">         execution a rule with the label Eq(x,y) is raised. *)</span></span>
+<span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a><span class="st">               ==&gt; x = y&quot;</span> <span class="co">(* then we must have x=y *)</span></span></code></pre></div>
+<div class="note">
+<p><span style="color: #0969da;">🗅 Note</span></p>
+<p>In Tamarin, some variables can be prefixed with a special symbol to
+give some additional details to the tool about their possible values. A
+<code>$</code> prefix denotes a publicly known constant, will
+<code>~n</code> denotes a fresh value obtained through a
+<code>Fr(~n)</code> fact. In the actual protocol modeling, the client
+and server identity <code>C</code> and <code>S</code> are in fact be
+<code>$C</code> and <code>$S</code>, and <code>x_sk</code> would be
+<code>~x_sk</code>.</p>
 </div>
 <h2 id="modeling-the-protocol">Modeling the protocol</h2>
 <p>To finalize the definition of the protocol, it remains to model the
@@ -444,34 +524,286 @@ concrete scenario we are in:</p>
 <li>how many client/server sessions do we set up?</li>
 <li>…</li>
 </ul>
+<p>In addition to the previous definitions for the Client we also
+defined similar things for Servers, we can in the pi-calculus based
+tools directly setup our scenarios by relying on a parallel composition
+operator <code>|</code> and a replication operator <code>!</code> to
+spawn multiple sessions.</p>
+<div class="sourceCode" id="cb11"><pre
+class="sourceCode crosstoolsyntax"><code class="sourceCode crosstoolsyntax"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co">(* Squirrel *)</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="kw">process</span> protocol = <span class="ot">(</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>   <span class="ot">(</span>!<span class="ot">_</span>i</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>     <span class="co">(* instantiate parallel replications indexed by i *)</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>      Client<span class="ot">(</span>i<span class="ot">))</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>   | </span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>   <span class="ot">(</span>!<span class="ot">_</span>S !<span class="ot">_</span>k Server<span class="ot">(</span>S,k<span class="ot">))</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>   <span class="ot">)</span></span></code></pre></div>
+<p><a id="proverif-protocol"></a></p>
+<div class="sourceCode" id="cb12"><pre
+class="sourceCode crosstoolsyntax"><code class="sourceCode crosstoolsyntax"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co">(* Proverif *)</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="kw">process</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    !</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    <span class="ot">(</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>    <span class="co">(* Initiatialize a new server identity, under the ! replication *)</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">new</span> s<span class="ot">_</span>sk: <span class="dt">skey</span><span class="ot">;</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> s<span class="ot">_</span>pk = pk<span class="ot">(</span>s<span class="ot">_</span>sk<span class="ot">)</span> <span class="kw">in</span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">out</span><span class="ot">(</span>c, s<span class="ot">_</span>pk<span class="ot">);</span></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>    <span class="co">(* spawn for this identity an unbounded number of sessions *)</span></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>    ! Server<span class="ot">(</span>s<span class="ot">_</span>sk,s<span class="ot">_</span>pk<span class="ot">)</span> </span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>    <span class="co">(* spawn an unbounded number of clients, using keys received as inputs *)</span></span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>    <span class="ot">(</span> ! <span class="kw">in</span><span class="ot">(</span>c,s<span class="ot">_</span>pk:pkey<span class="ot">);</span> Client<span class="ot">(</span>s<span class="ot">_</span>pk<span class="ot">))</span>   </span></code></pre></div>
+<p>CryptoVerif can also use the <code>|</code> operator to specify that
+an attacker gets access to some oracles in parallel, and has the
+<code>for each</code> instruction to replicate oracles.</p>
+<div class="sourceCode" id="cb13"><pre
+class="sourceCode crosstoolsyntax"><code class="sourceCode crosstoolsyntax"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co">(* CryptoVerif *)</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="kw">process</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="co">(* the initial oracle the attacker will have access to *)</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  Ostart<span class="ot">()</span> := </span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>    hf &lt;-R <span class="dt">hashfunction</span><span class="ot">;</span>  <span class="co">(* initialize the hash function. *)</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> <span class="ot">();</span></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>    <span class="co">(* after an empty return of this start oracle, the attacker gets</span></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a><span class="co">       access to the follow-up oracles. *)</span></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>    <span class="ot">(</span></span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>     <span class="ot">(</span><span class="kw">foreach</span> iC &lt;= NC <span class="kw">do</span></span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>      <span class="co">(* spawn an unbounded number of clients talking to anybody *)</span></span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>      OInitClient<span class="ot">(</span>s<span class="ot">_</span>pkC:pkey<span class="ot">)</span> :=</span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>         <span class="kw">return</span> <span class="ot">();</span></span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>         run Client<span class="ot">(</span>hf, s<span class="ot">_</span>pkC<span class="ot">)</span></span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>     <span class="ot">)</span></span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a>     |</span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a>     <span class="ot">(</span><span class="kw">foreach</span> iS &lt;= NS <span class="kw">do</span></span>
+<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a>     <span class="co">(* spawn an unbounded number of servers *)</span></span>
+<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a>      OInitServer<span class="ot">()</span> :=</span>
+<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a>          <span class="kw">let</span> <span class="ot">(</span>s<span class="ot">_</span>sk: <span class="dt">skey</span>, s<span class="ot">_</span>pk: <span class="dt">pkey</span><span class="ot">)</span> = keygen<span class="ot">()</span> <span class="kw">in</span></span>
+<span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a>      <span class="kw">return</span><span class="ot">(</span>s<span class="ot">_</span>pk<span class="ot">);</span>   </span>
+<span id="cb13-23"><a href="#cb13-23" aria-hidden="true" tabindex="-1"></a>         <span class="ot">(</span></span>
+<span id="cb13-24"><a href="#cb13-24" aria-hidden="true" tabindex="-1"></a>         <span class="co">(* and after having it initialized, </span></span>
+<span id="cb13-25"><a href="#cb13-25" aria-hidden="true" tabindex="-1"></a><span class="co">         spawn an unbounded number of sessions for this server *)</span></span>
+<span id="cb13-26"><a href="#cb13-26" aria-hidden="true" tabindex="-1"></a>          <span class="kw">foreach</span> iS2 &lt;= NS2 <span class="kw">do</span></span>
+<span id="cb13-27"><a href="#cb13-27" aria-hidden="true" tabindex="-1"></a>              run Server<span class="ot">(</span>hf, s<span class="ot">_</span>sk, s<span class="ot">_</span>pk<span class="ot">))</span></span>
+<span id="cb13-28"><a href="#cb13-28" aria-hidden="true" tabindex="-1"></a>      <span class="ot">)</span>  </span>
+<span id="cb13-29"><a href="#cb13-29" aria-hidden="true" tabindex="-1"></a>    <span class="ot">)</span></span></code></pre></div>
+<p>On the Tamarin side, the protocol is directly given by the set of
+rules we define, and any transition rule can be triggered at any time,
+assuming its premises are met. Typically, the previously defined
+<code>Client_Init</code> rule can directly be triggered an unbounded
+number of times. To complete the protocol model, we would only need to
+add rules for the server, and to define rules to set up the public key
+infrastructure. This PKI could look like this, thus enabling the
+execution of our second Tamarin rule <code>Client_Accepts</code>.</p>
+<p><a id="tamarin-protocol"></a></p>
+<div class="sourceCode" id="cb14"><pre
+class="sourceCode crosstoolsyntax"><code class="sourceCode crosstoolsyntax"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co">(* Tamarin *)</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>// Generate Server&#39;s long-term <span class="ot">(</span>s<span class="ot">_</span>sk, s<span class="ot">_</span>pk<span class="ot">)</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="kw">rule</span> Generate<span class="ot">_</span>serverLtk:</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>  <span class="kw">let</span> pkS = pk<span class="ot">(</span>~s<span class="ot">_</span>sk<span class="ot">)</span> </span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>  <span class="kw">in</span></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>  [ <span class="kw">Fr</span><span class="ot">(</span>~s<span class="ot">_</span>sk<span class="ot">)</span> ]</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>  <span class="co">(* By consuming an available fresh value sk *)</span></span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>  <span class="co">--&gt;</span></span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>  [ !Ltk<span class="ot">(</span>$S, ~s<span class="ot">_</span>sk<span class="ot">)</span>, </span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>  <span class="co">(* we store in the Ltk fact the secret key, that a server</span></span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a><span class="co">    rule would later read *)</span></span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>    !Pk<span class="ot">(</span>$S, s<span class="ot">_</span>pk<span class="ot">)</span>, </span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>    <span class="co">(* and we define the corresponding Pk fact storing the public key *)</span></span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>    <span class="kw">Out</span><span class="ot">(</span>s<span class="ot">_</span>pk<span class="ot">)</span> </span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a>    <span class="co">(* and we output on the network the public key. *)</span></span>
+<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a>    ]</span></code></pre></div>
 <h1 id="attacker-model">Attacker Model</h1>
 <p>In the presented tool, we always have an active attacker which
 controls the network. However, its capabilities differ, the main split
 being between the symbolic (Proverif/Tamarin) and the computational
-(EasyCrypt,CryptoVerif/Squirrel) tools.</p>
+(EasyCrypt/CryptoVerif/Squirrel) tools.</p>
 <h2 id="computational-attacker">Computational attacker</h2>
-<div class="todo">
-<p><span style="color: ##fffd34;">⚙ WIP/TODO </span></p>
-<p>Very quick description (we assume some crypto knowledge). Give
-snippets of uf-cma user defined axioms for EasyCrypt/CryptoVerif.
-Mention dedicated tactics for Squirrel + user-defined functions.</p>
-</div>
+<p>For tools that work in the computational model, we define the
+attacker model by stating which computational/decisional problems are
+hard. Each tool gives different ways to specify the usual cryptographic
+axioms, such as UF-CMA, the ROM, or CDH.</p>
+<p>In EasyCrypt, UF-CMA can be expressed almost literally as one would
+see it written in a crypto paper, modulo a few syntactic tidbits.</p>
+<div class="sourceCode" id="cb15"><pre
+class="sourceCode crosstoolsyntax"><code class="sourceCode crosstoolsyntax"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co">(* EasyCrypt *)</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="kw">module</span> UFCMA <span class="ot">(</span>S : SigScheme<span class="ot">)</span> <span class="ot">(</span>A : CMA<span class="ot">_</span>Adv<span class="ot">)</span> = <span class="ot">{</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="co">(* Given S a signature Scheme and A some adversary. *)</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>  <span class="co">(* an integer to identify each generated key pair *)</span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>  <span class="kw">var</span> n: <span class="dt">int</span></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>  <span class="co">(* maps from integers to the corresponding key *)</span></span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>  <span class="kw">var</span> pk<span class="ot">_</span>map: <span class="ot">(</span><span class="dt">int</span>, <span class="dt">pkey</span><span class="ot">)</span> <span class="dt">fmap</span></span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>  <span class="kw">var</span> sk<span class="ot">_</span>map: <span class="ot">(</span><span class="dt">int</span>, <span class="dt">skey</span><span class="ot">)</span> <span class="dt">fmap</span></span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>  <span class="co">(* the set of honestly signed messages. *)</span></span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>  <span class="kw">var</span> q: <span class="ot">(</span><span class="dt">int</span> * <span class="dt">msg</span><span class="ot">)</span> <span class="dt">fset</span></span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a>  <span class="co">(* We define some oracles *)</span></span>
+<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a>  <span class="kw">module</span> Oracles = <span class="ot">{</span></span>
+<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a>    <span class="co">(* This oracle generates a keypair, and stores it in the key map. *)</span>    </span>
+<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a>    <span class="kw">proc</span> gen<span class="ot">()</span> = <span class="ot">{</span>  </span>
+<span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a>      <span class="kw">var</span> pk, sk<span class="ot">;</span></span>
+<span id="cb15-22"><a href="#cb15-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-23"><a href="#cb15-23" aria-hidden="true" tabindex="-1"></a>      n &lt;- n + <span class="dv">1</span><span class="ot">;</span></span>
+<span id="cb15-24"><a href="#cb15-24" aria-hidden="true" tabindex="-1"></a>      <span class="ot">(</span>pk, sk<span class="ot">)</span> &lt;<span class="ot">@</span> S<span class="ot">.</span>keygen<span class="ot">();</span></span>
+<span id="cb15-25"><a href="#cb15-25" aria-hidden="true" tabindex="-1"></a>      pk<span class="ot">_</span>map<span class="ot">.</span>[n] &lt;- pk<span class="ot">;</span></span>
+<span id="cb15-26"><a href="#cb15-26" aria-hidden="true" tabindex="-1"></a>      sk<span class="ot">_</span>map<span class="ot">.</span>[n] &lt;- sk<span class="ot">;</span></span>
+<span id="cb15-27"><a href="#cb15-27" aria-hidden="true" tabindex="-1"></a>      <span class="kw">return</span> pk<span class="ot">;</span></span>
+<span id="cb15-28"><a href="#cb15-28" aria-hidden="true" tabindex="-1"></a>    <span class="ot">}</span></span>
+<span id="cb15-29"><a href="#cb15-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-30"><a href="#cb15-30" aria-hidden="true" tabindex="-1"></a>    <span class="co">(* This oracle uses key number j to sign message m *)</span></span>
+<span id="cb15-31"><a href="#cb15-31" aria-hidden="true" tabindex="-1"></a>    <span class="kw">proc</span> sign<span class="ot">(</span>j, m<span class="ot">)</span> = <span class="ot">{</span></span>
+<span id="cb15-32"><a href="#cb15-32" aria-hidden="true" tabindex="-1"></a>      <span class="kw">var</span> sign, sk<span class="ot">;</span></span>
+<span id="cb15-33"><a href="#cb15-33" aria-hidden="true" tabindex="-1"></a>      <span class="kw">var</span> r &lt;- None<span class="ot">;</span></span>
+<span id="cb15-34"><a href="#cb15-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-35"><a href="#cb15-35" aria-hidden="true" tabindex="-1"></a>      <span class="kw">if</span> <span class="ot">(</span><span class="dv">0</span> &lt; j &lt;= n<span class="ot">)</span> <span class="ot">{</span></span>
+<span id="cb15-36"><a href="#cb15-36" aria-hidden="true" tabindex="-1"></a>      <span class="co">(* if the key has been sampled *)</span></span>
+<span id="cb15-37"><a href="#cb15-37" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb15-38"><a href="#cb15-38" aria-hidden="true" tabindex="-1"></a>        sk &lt;- oget sk<span class="ot">_</span>map<span class="ot">.</span>[j]<span class="ot">;</span></span>
+<span id="cb15-39"><a href="#cb15-39" aria-hidden="true" tabindex="-1"></a>        sign &lt;<span class="ot">@</span> S<span class="ot">.</span>sign<span class="ot">(</span>sk, m<span class="ot">);</span></span>
+<span id="cb15-40"><a href="#cb15-40" aria-hidden="true" tabindex="-1"></a>        r &lt;- Some sign<span class="ot">;</span></span>
+<span id="cb15-41"><a href="#cb15-41" aria-hidden="true" tabindex="-1"></a>        <span class="co">(* We sign it *)</span></span>
+<span id="cb15-42"><a href="#cb15-42" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb15-43"><a href="#cb15-43" aria-hidden="true" tabindex="-1"></a>        <span class="co">(* and append to q the fact that m was signed with key j *)</span></span>
+<span id="cb15-44"><a href="#cb15-44" aria-hidden="true" tabindex="-1"></a>        q &lt;- q `|` fset1 <span class="ot">(</span>j, m<span class="ot">);</span></span>
+<span id="cb15-45"><a href="#cb15-45" aria-hidden="true" tabindex="-1"></a>      <span class="ot">}</span></span>
+<span id="cb15-46"><a href="#cb15-46" aria-hidden="true" tabindex="-1"></a>      <span class="kw">return</span> r<span class="ot">;</span></span>
+<span id="cb15-47"><a href="#cb15-47" aria-hidden="true" tabindex="-1"></a>    <span class="ot">}</span></span>
+<span id="cb15-48"><a href="#cb15-48" aria-hidden="true" tabindex="-1"></a>  <span class="ot">}</span></span>
+<span id="cb15-49"><a href="#cb15-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-50"><a href="#cb15-50" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb15-51"><a href="#cb15-51" aria-hidden="true" tabindex="-1"></a>  <span class="co">(* Final experiment definition *)</span></span>
+<span id="cb15-52"><a href="#cb15-52" aria-hidden="true" tabindex="-1"></a>  <span class="kw">proc</span> run<span class="ot">()</span> = <span class="ot">{</span></span>
+<span id="cb15-53"><a href="#cb15-53" aria-hidden="true" tabindex="-1"></a>    <span class="kw">var</span> j, m, sign, pk<span class="ot">;</span></span>
+<span id="cb15-54"><a href="#cb15-54" aria-hidden="true" tabindex="-1"></a>    <span class="kw">var</span> b &lt;- false<span class="ot">;</span></span>
+<span id="cb15-55"><a href="#cb15-55" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb15-56"><a href="#cb15-56" aria-hidden="true" tabindex="-1"></a>    <span class="co">(* initialize n to 0 *)</span></span>
+<span id="cb15-57"><a href="#cb15-57" aria-hidden="true" tabindex="-1"></a>    n &lt;- <span class="dv">0</span><span class="ot">;</span></span>
+<span id="cb15-58"><a href="#cb15-58" aria-hidden="true" tabindex="-1"></a>    <span class="co">(* intialize the honeslty signed message list to empty. *)</span></span>
+<span id="cb15-59"><a href="#cb15-59" aria-hidden="true" tabindex="-1"></a>    q &lt;- fset0<span class="ot">;</span></span>
+<span id="cb15-60"><a href="#cb15-60" aria-hidden="true" tabindex="-1"></a>    <span class="co">(* Ask attacker A with access to Oracles to return a key</span></span>
+<span id="cb15-61"><a href="#cb15-61" aria-hidden="true" tabindex="-1"></a><span class="co">    identifier, a message and a signature. *)</span></span>
+<span id="cb15-62"><a href="#cb15-62" aria-hidden="true" tabindex="-1"></a>    <span class="ot">(</span>j, m, sign<span class="ot">)</span> &lt;<span class="ot">@</span> A<span class="ot">(</span>Oracles<span class="ot">).</span>forge<span class="ot">();</span></span>
+<span id="cb15-63"><a href="#cb15-63" aria-hidden="true" tabindex="-1"></a>    <span class="kw">if</span> <span class="ot">(</span><span class="dv">0</span> &lt; j &lt;= n /\ <span class="ot">(</span>j, m<span class="ot">)</span> <span class="ot">\</span>notin q<span class="ot">)</span> <span class="ot">{</span></span>
+<span id="cb15-64"><a href="#cb15-64" aria-hidden="true" tabindex="-1"></a>      <span class="co">(* if the key indentifier is valid and the message was never</span></span>
+<span id="cb15-65"><a href="#cb15-65" aria-hidden="true" tabindex="-1"></a><span class="co">      signed for this key. *)</span></span>
+<span id="cb15-66"><a href="#cb15-66" aria-hidden="true" tabindex="-1"></a>      pk &lt;- oget pk<span class="ot">_</span>map<span class="ot">.</span>[j]<span class="ot">;</span></span>
+<span id="cb15-67"><a href="#cb15-67" aria-hidden="true" tabindex="-1"></a>      <span class="co">(* the attacker wins, i.e. we return 1, if the signature does</span></span>
+<span id="cb15-68"><a href="#cb15-68" aria-hidden="true" tabindex="-1"></a><span class="co">         verifies. *)</span></span>
+<span id="cb15-69"><a href="#cb15-69" aria-hidden="true" tabindex="-1"></a>      b &lt;<span class="ot">@</span> S<span class="ot">.</span>verify<span class="ot">(</span>pk, m, sign<span class="ot">);</span></span>
+<span id="cb15-70"><a href="#cb15-70" aria-hidden="true" tabindex="-1"></a>    <span class="ot">}</span></span>
+<span id="cb15-71"><a href="#cb15-71" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> b<span class="ot">;</span></span>
+<span id="cb15-72"><a href="#cb15-72" aria-hidden="true" tabindex="-1"></a>  <span class="ot">}</span></span>
+<span id="cb15-73"><a href="#cb15-73" aria-hidden="true" tabindex="-1"></a><span class="ot">}.</span></span></code></pre></div>
+<p>In CryptoVerif, we can have user-defined cryptographic axioms, where
+we can model generic equivalences between two set of oracles that the
+attacker has access to. However, user-defined equivalences are later on
+automatically used to make reductionist game-hops by CryptoVerif, they
+thus often need to be specified with some optional arguments and in a
+very specific and ad-hoc way amenable to its automation. We thus do not
+give here the actual UF-CMA CryptoVerif definition, which is not very
+user-friendly. As a toy example, let us rather consider that we want to
+express that sampling a key seed and returning the corresponding secret
+key is perfectly indistinguishable to directly sampling a secret
+key.</p>
+<div class="sourceCode" id="cb16"><pre
+class="sourceCode crosstoolsyntax"><code class="sourceCode crosstoolsyntax"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co">(* CryptoVerif *)</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="co">(* We define an equivalence of name `keygen` relating to function</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="co">    `skgen` *)</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="kw">equiv</span><span class="ot">(</span>keygen<span class="ot">(</span>skgen<span class="ot">))</span></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>    r &lt;-R <span class="dt">keyseed</span><span class="ot">;</span>   <span class="co">(* sampling a keyseed *)</span></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>       Okey<span class="ot">()</span> := <span class="kw">return</span><span class="ot">(</span>skgen<span class="ot">(</span>r<span class="ot">))</span> </span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>       <span class="co">(* and returning the corresponding sk *)</span></span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>    &lt;=<span class="ot">(</span><span class="dv">0</span><span class="ot">)</span>=&gt; <span class="co">(* can be distinguished with at most probability 0 *)</span></span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>    k &lt;-R <span class="dt">skey</span><span class="ot">;</span>   <span class="co">(* from sampling a secret key directly *)</span></span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>         Okey<span class="ot">()</span> := <span class="kw">return</span><span class="ot">(</span>k<span class="ot">).</span></span></code></pre></div>
+<p>Squirrel has two options to declare such axioms. It has a library of
+builtins, and one can just write
+<code>signature SIGsign,SIGverify,pk</code> to directly declare a UFCMA
+signature SIGsign. Alternatively, one can write a subset user-defined
+axioms, by expressing the equivalence of two given sets of oracles that
+the attacker has access to, similar in spirit to CryptoVerif. However,
+the two sets of oracles are actually defined as a single set, but using
+a <code>diff(x,y)</code> operator in some places to specify that the
+left-side oracle uses <code>x</code> here and the right-side oracle uses
+<code>y</code>.</p>
+<div class="sourceCode" id="cb17"><pre
+class="sourceCode crosstoolsyntax"><code class="sourceCode crosstoolsyntax"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co">(* Squirrel *)</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="kw">game</span> UFCMA = <span class="ot">{</span></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>  <span class="co">(* Defines on random secret key. *)</span></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>  <span class="kw">rnd</span> sk : <span class="dt">skey</span><span class="ot">;</span></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>  <span class="co">(* Initializes the empty list of signed messages. *)</span></span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>  <span class="kw">var</span> l = empty<span class="ot">_</span>set<span class="ot">;</span></span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a> <span class="co">(* Give to the attacker the public key. *)</span></span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>  <span class="kw">oracle</span> pk = <span class="ot">{</span></span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> pk<span class="ot">(</span>sk<span class="ot">)</span></span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>  <span class="ot">}</span></span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a>  <span class="co">(* Give to the attacker access to a signing oracle. *)</span></span>
+<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a>  <span class="kw">oracle</span> sign x = <span class="ot">{</span></span>
+<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a>    l := add x l<span class="ot">;</span></span>
+<span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> SIGsign<span class="ot">(</span>x,sk<span class="ot">)</span></span>
+<span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a>  <span class="ot">}</span></span>
+<span id="cb17-19"><a href="#cb17-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-20"><a href="#cb17-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-21"><a href="#cb17-21" aria-hidden="true" tabindex="-1"></a>  <span class="co">(* Define the challenge oracle. *)</span></span>
+<span id="cb17-22"><a href="#cb17-22" aria-hidden="true" tabindex="-1"></a>  <span class="kw">oracle</span> challenge s m = <span class="ot">{</span></span>
+<span id="cb17-23"><a href="#cb17-23" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span></span>
+<span id="cb17-24"><a href="#cb17-24" aria-hidden="true" tabindex="-1"></a>      <span class="kw">if</span> not <span class="ot">(</span>mem m l<span class="ot">)</span> <span class="kw">then</span></span>
+<span id="cb17-25"><a href="#cb17-25" aria-hidden="true" tabindex="-1"></a>        <span class="co">(* If the message is not in the list *)</span></span>
+<span id="cb17-26"><a href="#cb17-26" aria-hidden="true" tabindex="-1"></a>       <span class="kw">diff</span><span class="ot">(</span>SIGVerify<span class="ot">(</span>m,key<span class="ot">)</span>, </span>
+<span id="cb17-27"><a href="#cb17-27" aria-hidden="true" tabindex="-1"></a>            <span class="co">(* then the left hand side oracle which executes the</span></span>
+<span id="cb17-28"><a href="#cb17-28" aria-hidden="true" tabindex="-1"></a><span class="co">      verification *)</span></span>
+<span id="cb17-29"><a href="#cb17-29" aria-hidden="true" tabindex="-1"></a>            false<span class="ot">)</span></span>
+<span id="cb17-30"><a href="#cb17-30" aria-hidden="true" tabindex="-1"></a>            <span class="co">(* is indistinguishable from an attacker returning false. *)</span></span>
+<span id="cb17-31"><a href="#cb17-31" aria-hidden="true" tabindex="-1"></a>      <span class="kw">else</span> true</span>
+<span id="cb17-32"><a href="#cb17-32" aria-hidden="true" tabindex="-1"></a>  <span class="ot">}</span></span>
+<span id="cb17-33"><a href="#cb17-33" aria-hidden="true" tabindex="-1"></a><span class="ot">}.</span></span></code></pre></div>
 <h2 id="symbolic-attacker">Symbolic attacker</h2>
-<p>In the symbolic world, the cryptography is assumed to be ideal.</p>
+<p>In the symbolic world, the cryptography is assumed to be ideal, and
+only the equations that we explicitly give may yield equalities between
+terms. Typically, with the previous variants of our signature
+definitions, <code>SIGsign(m,k)</code> for each <code>m</code> and
+<code>k</code> is a unique message, that only can only compute if they
+know both <code>m</code> and <code>k</code>, and that will never be
+equal to any other message, and that does not leak any information about
+<code>m</code> and <code>k</code>.</p>
+<p>The attacker capabilities are then completely defined by the set of
+equations we explicitly define, and what it sees over the network. At
+its core, this is what enables a high-level of automation in this level,
+as we can reason about the attacker knowledge by saturating the messages
+sent over the network through the equations, and decide if it can or not
+know some value.</p>
+<div class="caution">
+<p><span style="color: #cf222e;">⚠ Caution</span></p>
+<p>It can be easy to make implicit assumptions that can go unnoticed in
+the symbolic model. For instance, as we defined it
+<code>SIGsign(m,k)</code> does not leak anything about the signed
+messages. This is not always the case for all signatures, and we must
+add an addition function and equation to model this fact, of the form
+<code>getmess(SIGsign(m,k))=m</code>.</p>
+</div>
 <div class="important">
 <p><span style="color: #8250df;">🖹 Important</span></p>
 <p>We keep here the presentation simple. Note that however, symbolic
-models have recently been developped to capture in a fine-grained
-fashion many primitives, typically capturing the low-order points of
-X25519, the length-extension property of SHA2, and other subtle
-properties of signatures, KEMs, AEADs,…</p>
-<p>In addition, it also enable to model cases where the attacker is in
+models have recently been developed to capture in a fine-grained fashion
+many primitives, typically capturing the low-order points of X25519, the
+length-extension property of SHA2, and other subtle properties of
+signatures, KEMs, AEADs,…</p>
+<p>In addition, it also enables modeling cases where the attacker is in
 fact stronger than in the usual computational model, for instance by
 letting the attacker chose at run time the output values of a hash
 function, as long as it does not make any collision.</p>
 <p>Comparing the symbolic and the computational attacker is thus not
-compltely straigthforward in some cases, and especially on big protocols
-where computational proofs are out of reach.</p>
+completely straightforward in some cases, and especially on big
+protocols where computational proofs are out of reach.</p>
 </div>
 <h1 id="security-definitions">Security definitions</h1>
 <p>We now turn to actually modeling the security definitions.</p>
@@ -485,10 +817,229 @@ challenge.</p>
 </div>
 <h2 id="symbolic-security-definitions">Symbolic security
 definitions</h2>
-<div class="todo">
-<p><span style="color: ##fffd34;">⚙ WIP/TODO </span></p>
-<p>Notion of events and attacker knwoledge, model compromise inside the
-protocol model, snippets of ProVerif queries + Tamarin lemmas.</p>
+<p>In symbolic tools, we reason about the possible executions of events,
+and can express that all executions satisfy some property, or that some
+executions cannot occur. To allow for reasoning over the executions, we
+add to our protocol definitions events, that agents may raise at
+runtime. The list of events that occur in a given execution form the
+trace of this execution, and we specify properties over the traces in
+some dedicated logic.</p>
+<h3 id="authentication">Authentication</h3>
+<p>For key-exchanges, it is natural to define two events, a
+<code>ServerAccept(s_pk,x_pk,y_pk,k_S)</code> and a
+<code>ClientAccept(s_pk,x_pk,y_pk,k_C)</code>, each executed by the
+corresponding agent when terminating the protocol with the given
+values..</p>
+<p>In ProVerif, we would typically add on the client side the event by
+updating the client process definitions.</p>
+<div class="sourceCode" id="cb18"><pre
+class="sourceCode crosstoolsyntax"><code class="sourceCode crosstoolsyntax"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="co">(* ProVerif *)</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> Client<span class="ot">(</span>s<span class="ot">_</span>pk : <span class="dt">pkey</span><span class="ot">)</span> = </span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>    <span class="ot">(...)</span></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>    <span class="co">(* Second message *)</span></span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">in</span><span class="ot">(</span>c, <span class="ot">(</span>y<span class="ot">_</span>pk : <span class="dt">G</span>,sign : <span class="dt">bitstring</span><span class="ot">));</span></span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">if</span> SIGverify<span class="ot">(</span>sign, <span class="ot">(</span>x<span class="ot">_</span>pk,y<span class="ot">_</span>pk<span class="ot">)</span>, s<span class="ot">_</span>pk<span class="ot">)</span> <span class="kw">then</span></span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>       <span class="kw">let</span> k<span class="ot">_</span>C = Hash<span class="ot">(</span> exp<span class="ot">(</span>y<span class="ot">_</span>pk,x<span class="ot">_</span>sk<span class="ot">))</span> <span class="kw">in</span>       </span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>       <span class="kw">event</span> ClientAccept<span class="ot">(</span>s<span class="ot">_</span>pk,x<span class="ot">_</span>pk,y<span class="ot">_</span>pk,k<span class="ot">_</span>C<span class="ot">).</span></span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>       </span></code></pre></div>
+<p>In Tamarin, events are the labels of the rules.</p>
+<div class="sourceCode" id="cb19"><pre
+class="sourceCode crosstoolsyntax"><code class="sourceCode crosstoolsyntax"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co">(* Tamarin *)</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="kw">rule</span> Client<span class="ot">_</span>Accepts:</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>  <span class="kw">let</span></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>    m = &lt;y<span class="ot">_</span>pk, serverSign&gt;</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>    x<span class="ot">_</span>pk = <span class="ch">&#39;g&#39;</span>^x<span class="ot">_</span>sk</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>    dh<span class="ot">_</span>output = y<span class="ot">_</span>pk^x<span class="ot">_</span>sk</span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>    K<span class="ot">_</span>C = h<span class="ot">(</span>dh<span class="ot">_</span>output<span class="ot">)</span></span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>  <span class="kw">in</span></span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>  [ <span class="kw">StateC</span><span class="ot">(</span>C, x<span class="ot">_</span>sk<span class="ot">)</span>, </span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a>    !Pk<span class="ot">(</span>S, s<span class="ot">_</span>pk<span class="ot">)</span>,</span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a>    <span class="kw">In</span><span class="ot">(</span>m<span class="ot">)</span></span>
+<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a>    ]</span>
+<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a>  <span class="co">--[  Eq(verify(serverSign, &lt;x_pk, y_pk&gt;, s_pk), true),</span></span>
+<span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a>       ClientAccept<span class="ot">(</span>C,S,s<span class="ot">_</span>pk,x<span class="ot">_</span>pk,y<span class="ot">_</span>pk,k<span class="ot">_</span>C<span class="ot">)</span></span>
+<span id="cb19-16"><a href="#cb19-16" aria-hidden="true" tabindex="-1"></a>    ]-&gt;</span>
+<span id="cb19-17"><a href="#cb19-17" aria-hidden="true" tabindex="-1"></a>  [ ]</span></code></pre></div>
+<p>Tamarin uses to specify security property the same first-order
+temporal logic we saw before for the restriction. We can specify lemmas,
+which are property that should hold on all possible traces. It enables
+to naturally model the authentication property.</p>
+<div class="sourceCode" id="cb20"><pre
+class="sourceCode crosstoolsyntax"><code class="sourceCode crosstoolsyntax"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co">(* Tamarin *)</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="kw">lemma</span> auth:</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a> <span class="st">&quot;All s_pk, x_pk, y_pk, k_C #i</span></span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a><span class="st">       ClientAccept(C,S,s_pk,x_pk,y_pk,k_C)@i </span></span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a><span class="st">       (* if client accepted at time i in the trace. *)</span></span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a><span class="st">        ==&gt; Ex #j. j &lt; i  &amp;&amp;</span></span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a><span class="st">            (* there exists another timepoint j before i *)</span></span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a><span class="st">            ServerAccept(C,S,s_pk,x_pk,y_pk,k_S)@j          </span></span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a><span class="st">            (* where a server accepted with the same parameters. *)</span></span>
+<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a><span class="st">    ]-&gt;</span></span>
+<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a><span class="st">  [ ]</span></span></code></pre></div>
+<p>Intuitively, on the Tamarin model as we introduced it step by step,
+this property would hold, as clients only use honest public keys
+obtained from the fact <code>!Pk</code>.</p>
+<p>In ProVerif, the lemma specification language is less generic. We
+express authentication properties through so-called correspondence
+queries, where the quantifiers over variables are implicit.</p>
+<div class="sourceCode" id="cb21"><pre
+class="sourceCode crosstoolsyntax"><code class="sourceCode crosstoolsyntax"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co">(* ProVerif *)</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="co">(* Client-side authentication *)</span></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a><span class="kw">query</span> s<span class="ot">_</span>pk : <span class="dt">pkey</span>, x<span class="ot">_</span>pk,y<span class="ot">_</span>pk : <span class="dt">G</span>, k : <span class="dt">bitstring</span><span class="ot">;</span> </span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>    <span class="co">(* universally quantified variable *)</span></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>      <span class="co">(* if a client accept at any point in time *)</span></span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>      <span class="kw">event</span><span class="ot">(</span>ClientAccept<span class="ot">(</span>s<span class="ot">_</span>pk,x<span class="ot">_</span>pk,y<span class="ot">_</span>pk,k<span class="ot">))</span></span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>         ==&gt; <span class="co">(* then somewhere in the past *)</span></span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>         <span class="kw">event</span><span class="ot">(</span>ServerAccept<span class="ot">(</span>s<span class="ot">_</span>pk,x<span class="ot">_</span>pk,y<span class="ot">_</span>pk,k<span class="ot">))</span></span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>        <span class="co">(* there is a matching session*)</span></span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>        <span class="ot">).</span></span></code></pre></div>
+<p>However, this property does not hold! Indeed, recall that in our <a
+href="#proverif-protocol">ProVerif protocol definition</a>, we allow
+clients to run for any public key <code>s_pk</code> provided by the
+attacker over the network. However, we can add an event to remember
+which public keys are honest.</p>
+<div class="sourceCode" id="cb22"><pre
+class="sourceCode crosstoolsyntax"><code class="sourceCode crosstoolsyntax"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co">(* Proverif *)</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="kw">process</span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="co">(* We define a variant of the process definitions. *)</span></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>    !</span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>    <span class="ot">(</span></span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">new</span> s<span class="ot">_</span>sk: <span class="dt">skey</span><span class="ot">;</span></span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> s<span class="ot">_</span>pk = pk<span class="ot">(</span>s<span class="ot">_</span>sk<span class="ot">)</span> <span class="kw">in</span></span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">event</span> HonestServer<span class="ot">(</span>s<span class="ot">_</span>pk<span class="ot">);</span>   </span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>    <span class="co">(* We add an event for each honestly generated public keys. *)</span></span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>    <span class="kw">out</span><span class="ot">(</span>c, s<span class="ot">_</span>pk<span class="ot">);</span></span></code></pre></div>
+<p>We then use it in our queries, to clarify that we only expect this to
+hold when a client accepted with an honestly generated key.</p>
+<div class="sourceCode" id="cb23"><pre
+class="sourceCode crosstoolsyntax"><code class="sourceCode crosstoolsyntax"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co">(* ProVerif *)</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="co">(* Client-side authentication *)</span></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a><span class="kw">query</span> s<span class="ot">_</span>pk : <span class="dt">pkey</span>, x<span class="ot">_</span>pk,y<span class="ot">_</span>pk : <span class="dt">G</span>, k : <span class="dt">bitstring</span><span class="ot">;</span> </span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>    <span class="co">(* universally quantified variable *)</span></span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>      <span class="co">(* if a client accept at any point in time *)</span></span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>      <span class="kw">event</span><span class="ot">(</span>ClientAccept<span class="ot">(</span>s<span class="ot">_</span>pk,x<span class="ot">_</span>pk,y<span class="ot">_</span>pk,k<span class="ot">))</span></span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>      &amp;&amp;  <span class="kw">event</span><span class="ot">(</span>HonestServer<span class="ot">(</span>s<span class="ot">_</span>pk<span class="ot">))</span></span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>          <span class="co">(* and the s_pk key is honest *)</span></span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a>         ==&gt; <span class="co">(* then somewhere in the past *)</span></span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a>         <span class="kw">event</span><span class="ot">(</span>ServerAccept<span class="ot">(</span>s<span class="ot">_</span>pk,x<span class="ot">_</span>pk,y<span class="ot">_</span>pk,k<span class="ot">))</span></span>
+<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a>        <span class="co">(* there is a matching session*)</span></span>
+<span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a>        <span class="ot">).</span></span></code></pre></div>
+<div class="caution">
+<p><span style="color: #cf222e;">⚠ Caution</span></p>
+<p>Correctly defining the public key infrastructure is one of the key
+points of modeling protocols that can lead to very strong differences in
+the quality of the final model. If we left the Tamarin model in its
+current state, it would be a model of key-exchanges where there only
+exists honest servers, and clients never try to contact any dishonest
+server. Conversely, without the <code>HonestServer</code> event, our
+ProVerif model was meaningless, in the sense that it was impossible to
+prove any security property over it.</p>
+<p>Another difference is that in ProVerif, we do not have a notion of
+client or server identities, and only identify servers through their
+public keys. In Tamarin, we use unique public identifiers <code>C</code>
+and <code>S</code>. For our protocol, this does not change anything, but
+in scenarios where for instance agents can dynamically register public
+key, the ProVerif model would not be suitable and we would have to add
+agents identifiers.</p>
+</div>
+<h3 id="forward-secrecy">Forward Secrecy</h3>
+<p>To model forward secrecy, we need to add to our protocol model the
+fact that some <code>s_sk</code> secret keys might be compromised and
+leaked to the attacker. Both in Tamarin and ProVerif, this is done by
+modeling this inside the syntax of our protocol, almost like if the
+server actually had a compromise command that the attacker could query
+on the network and then obtain the secret key.</p>
+<p>In ProVerif, we would simply add in parallel to our other processes a
+single line compromise process.</p>
+<div class="sourceCode" id="cb24"><pre
+class="sourceCode crosstoolsyntax"><code class="sourceCode crosstoolsyntax"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co">(* ProVerif *)</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="ot">(...)</span></span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>    <span class="co">(* on a dummy input, we give the attacker the power to compromise the public key. *)</span>    </span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>    | <span class="ot">(</span><span class="kw">in</span><span class="ot">(</span>c, =0<span class="ot">);</span> <span class="kw">event</span> CompromiseServer<span class="ot">(</span>s<span class="ot">_</span>pk<span class="ot">);</span> <span class="kw">out</span><span class="ot">(</span>c,s<span class="ot">_</span>sk<span class="ot">))</span></span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a><span class="ot">(...)</span>   </span></code></pre></div>
+<p>In Tamarin, we simply add a new compromise rule, which uses the
+<code>!LTK</code> fact in the key generation of our <a
+href="tamarin-protocol">Tamarin protocol definition</a>.</p>
+<div class="sourceCode" id="cb25"><pre
+class="sourceCode crosstoolsyntax"><code class="sourceCode crosstoolsyntax"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co">(* Tamarin *)</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>// The attacker learns the server&#39;s long-term key</span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a><span class="kw">rule</span> Compromise<span class="ot">_</span>LTK:</span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>  [ !Ltk<span class="ot">(</span>S, ~sk<span class="ot">)</span>]</span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>  <span class="co">(* Read some secret key *)</span></span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>  <span class="co">--[CompromiseLtk(S, pk(~sk))]-&gt;</span></span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>  [ <span class="kw">Out</span><span class="ot">(</span>~sk<span class="ot">)</span> ]</span></code></pre></div>
+<p>To express secrecy properties, both tool rely on the fact that the
+attacker may raise its own event in the trace when it can compute a
+value. In Tamarin, this is denoted with the <code>K(x)</code> event, and
+we can express forward secrecy as follows.</p>
+<div class="sourceCode" id="cb26"><pre
+class="sourceCode crosstoolsyntax"><code class="sourceCode crosstoolsyntax"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co">(* Tamarin *)</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a><span class="kw">lemma</span> auth:</span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a> <span class="st">&quot;All C S s_pk, x_pk, y_pk, k_C #i #k</span></span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a><span class="st">       ClientAccept(C,S,s_pk,x_pk,y_pk,k_C)@i </span></span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a><span class="st">       (* if client accepted at time i in the trace. *)</span></span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a><span class="st">       &amp;&amp; K(k_C)</span></span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a><span class="st">       (* and the attacker knows the derived key. *)</span></span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a><span class="st">        ==&gt; </span></span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a><span class="st">        (Ex #j. j &lt; i &amp;&amp; CompromiseLtk(S, s_pk))    </span></span>
+<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a><span class="st">        (* then the corresponding public key of the corresponding</span></span>
+<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a><span class="st">           server was leaked in the past. *)</span></span>
+<span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a><span class="st">    ]-&gt;</span></span>
+<span id="cb26-14"><a href="#cb26-14" aria-hidden="true" tabindex="-1"></a><span class="st">  [ ]</span></span></code></pre></div>
+<p>In ProVerif, this is denoted with an <code>attacker(x)</code>
+event.</p>
+<div class="sourceCode" id="cb27"><pre
+class="sourceCode crosstoolsyntax"><code class="sourceCode crosstoolsyntax"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co">(* ProVerif *)</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a><span class="co">(* Client-side authentication *)</span></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a><span class="kw">query</span> s<span class="ot">_</span>pk : <span class="dt">pkey</span>, x<span class="ot">_</span>pk,y<span class="ot">_</span>pk : <span class="dt">G</span>, k : <span class="dt">bitstring</span><span class="ot">;</span> </span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>    <span class="co">(* universally quantified variable *)</span></span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>      <span class="kw">event</span><span class="ot">(</span>ClientAccept<span class="ot">(</span>s<span class="ot">_</span>pk,x<span class="ot">_</span>pk,y<span class="ot">_</span>pk,k<span class="ot">))</span></span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>      <span class="co">(* if a client accept at any point in time *)</span>   </span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>      &amp;&amp;  <span class="kw">event</span><span class="ot">(</span>HonestServer<span class="ot">(</span>s<span class="ot">_</span>pk<span class="ot">))</span></span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>      <span class="co">(* with an honest server *)</span></span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a>      &amp;&amp; attacker<span class="ot">(</span>k<span class="ot">)</span></span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a>      <span class="co">(* and the attacker knows the key *)</span></span>
+<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a>          <span class="co">(* and the s_pk key is honest *)</span></span>
+<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a>         ==&gt; <span class="co">(* then somewhere in the past *)</span></span>
+<span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a>         <span class="kw">event</span><span class="ot">(</span>CompromiseServer<span class="ot">(</span>s<span class="ot">_</span>pk<span class="ot">))</span></span>
+<span id="cb27-15"><a href="#cb27-15" aria-hidden="true" tabindex="-1"></a>        <span class="co">(* the key was compromised *)</span></span>
+<span id="cb27-16"><a href="#cb27-16" aria-hidden="true" tabindex="-1"></a>        <span class="ot">).</span></span></code></pre></div>
+<h3 id="sanity-checks">Sanity checks</h3>
+<p>The Tamarin lemmas and ProVerif queries can be used to check that our
+protocols are indeed executable.</p>
+<div class="sourceCode" id="cb28"><pre
+class="sourceCode crosstoolsyntax"><code class="sourceCode crosstoolsyntax"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co">(* ProVerif *)</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a><span class="kw">query</span> s<span class="ot">_</span>pk : <span class="dt">pkey</span>, x<span class="ot">_</span>pk,y<span class="ot">_</span>pk : <span class="dt">G</span>, k : <span class="dt">bitstring</span><span class="ot">;</span> </span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>      <span class="kw">event</span><span class="ot">(</span>ClientAccept<span class="ot">(</span>s<span class="ot">_</span>pk,x<span class="ot">_</span>pk,y<span class="ot">_</span>pk,k<span class="ot">)).</span> </span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>      <span class="co">(* can the event be executed ? *)</span></span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a><span class="co">(* Tamarin *)</span>     </span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a><span class="kw">lemma</span> exec<span class="ot">_</span>c:</span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a>  exists-trace <span class="co">(* does there exists a trace such that *)</span></span>
+<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a> <span class="st">&quot;Ex C S s_pk, x_pk, y_pk, k_C #i</span></span>
+<span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a><span class="st">     (* there exists parameters and a timepoint i *)</span></span>
+<span id="cb28-12"><a href="#cb28-12" aria-hidden="true" tabindex="-1"></a><span class="st">     ClientAccept(C,S,s_pk,x_pk,y_pk,k_C)@i.</span></span>
+<span id="cb28-13"><a href="#cb28-13" aria-hidden="true" tabindex="-1"></a><span class="st">     (* where a client accepts. *)</span></span></code></pre></div>
+<div class="caution">
+<p><span style="color: #cf222e;">⚠ Caution</span></p>
+<p>In symbolic protocols models, sanity checks are crucial! Indeed,
+going back to the forward secrecy or authentication properties, they
+check that for all traces, if some client accepts, something is
+verified. If no clients can ever accept, for instance because we made a
+typo and swapped the two pair elements <code>&lt;x_pk,y_pk&gt;</code> on
+the server side, those queries could be trivially true!</p>
 </div>
 <h2 id="computational-security-definitions">Computational security
 definitions</h2>

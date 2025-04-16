@@ -27,7 +27,29 @@
       <item>in</item>
       <item>out</item>
       <item>process</item>
-      <item>name</item>      
+      <item>name</item>
+      <item>Fr</item>
+      <item>Out</item>
+      <item>In</item>
+      <item>StateC</item>
+      <item>restriction</item>
+      <item>All</item>
+      <item>rule</item>
+      <item>var</item>
+      <item>game</item>
+      <item>oracle</item>
+      <item>rnd</item>
+      <item>else</item>
+      <item>Ex</item>
+      <item>Pk</item>
+      <item>new</item>
+      <item>foreach</item>
+      <item>do</item>
+      <item>Ltk</item>
+      <item>equiv</item>
+      <item>diff</item>
+      <item>event</item>
+      <item>query</item>
     </list>
     <list name="our types">
       <item>bitstring</item>
@@ -43,7 +65,10 @@
       <item>hashfunction</item>
       <item>index</item>      
       <item>Z</item>
-      <item>G</item>      
+      <item>G</item>
+      <item>int</item>
+      <item>fset</item>
+      <item>fmap</item>
     </list>    
     <contexts>
       <context attribute="Normal" lineEndContext="#stay" name="code">
